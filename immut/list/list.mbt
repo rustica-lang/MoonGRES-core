@@ -211,9 +211,9 @@ pub fn filter[A](self : T[A], f : (A) -> Bool) -> T[A] {
 ///|
 /// Test if all elements of the list satisfy the predicate.
 pub fn all[A](self : T[A], f : (A) -> Bool) -> Bool {
-  match self {
+  loop self {
     Nil => true
-    Cons(head, tail) => f(head) && all(tail, f)
+    Cons(head, tail) => if f(head) { continue tail } else { false }
   }
 }
 
@@ -1012,26 +1012,10 @@ pub fn remove[A : Eq](self : T[A], elem : A) -> T[A] {
 /// assert_eq!(@list.of([1, 2, 3, 4, 5]).is_prefix(@list.of([1, 2, 3])), true)
 /// ```
 pub fn is_prefix[A : Eq](self : T[A], prefix : T[A]) -> Bool {
-  match (self, prefix) {
-    (_, Nil) => true
-    (Nil, Cons(_)) => false
-    (Cons(h1, t1), Cons(h2, t2)) => h1 == h2 && t1.is_prefix(t2)
-  }
-}
-
-///|
-/// Compares two lists for equality.
-///
-/// # Example
-///
-/// ```
-/// assert_eq!(@list.of([1, 2, 3]).equal(@list.of([1, 2, 3])), true)
-/// ```
-pub fn equal[A : Eq](self : T[A], other : T[A]) -> Bool {
-  match (self, other) {
-    (Nil, Nil) => true
-    (Cons(h, t), Cons(h1, t1)) => h == h1 && t.equal(t1)
-    _ => false
+  loop self, prefix {
+    _, Nil => true
+    Nil, Cons(_) => false
+    Cons(h1, t1), Cons(h2, t2) => if h1 == h2 { continue t1, t2 } else { false }
   }
 }
 
@@ -1065,7 +1049,9 @@ pub fn intercalate[A](self : T[T[A]], sep : T[A]) -> T[A] {
 }
 
 ///|
-pub impl[X] Default for T[X] with default() { Nil }
+pub impl[X] Default for T[X] with default() {
+  Nil
+}
 
 ///|
 /// The empty list
@@ -1104,7 +1090,15 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
 }
 
 ///|
+/// Convert the iterator into a list. Preserves order of elements.
+/// This function is tail-recursive, but consumes 2*n memory. 
+/// If the order of elements is not important, use `from_iter_rev` instead.
 pub fn from_iter[A](iter : Iter[A]) -> T[A] {
+  iter.fold(init=Nil, fn(acc, e) { Cons(e, acc) }).rev()
+}
+
+///|
+pub fn from_iter_rev[A](iter : Iter[A]) -> T[A] {
   iter.fold(init=Nil, fn(acc, e) { Cons(e, acc) })
 }
 

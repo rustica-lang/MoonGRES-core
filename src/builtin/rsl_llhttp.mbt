@@ -202,13 +202,6 @@ pub fn on_url(url : BytesView) -> CallbackResult {
 }
 
 ///|
-pub fn on_url_complete() -> CallbackResult {
-  let url = state.url.unwrap().decode(encoding="ascii")
-  state.event = Some(OnUrl(url))
-  Paused
-}
-
-///|
 pub fn on_version_complete() -> CallbackResult {
   let major = llhttp_get_http_major()
   let minor = llhttp_get_http_minor()

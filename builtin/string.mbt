@@ -70,8 +70,8 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 ///
 /// # Panics
 ///
-/// Panics if the index is out of bounds.
-pub fn charcode_at(self : String, index : Int) -> Int {
+/// @alert unsafe "Panics if the index is out of bounds."
+pub fn String::charcode_at(self : String, index : Int) -> Int {
   guard index >= 0 && index < self.length() else {
     abort("index out of bounds")
   }
@@ -88,8 +88,8 @@ pub fn charcode_at(self : String, index : Int) -> Int {
 ///
 /// ```
 /// let s = "Hello🤣";
-/// inspect!(s.codepoint_at(0), content="'H'");
-/// inspect!(s.codepoint_at(5), content="'🤣'"); // Returns full emoji character
+/// inspect!(s.codepoint_at(0), content="H");
+/// inspect!(s.codepoint_at(5), content="🤣"); // Returns full emoji character
 /// ```
 ///
 /// # Panics
@@ -97,7 +97,7 @@ pub fn charcode_at(self : String, index : Int) -> Int {
 /// Panics if:
 /// - The index is out of bounds
 /// - The string contains an invalid surrogate pair
-pub fn codepoint_at(self : String, index : Int) -> Char {
+pub fn String::codepoint_at(self : String, index : Int) -> Char {
   let charcode_len = self.charcode_length()
   guard index >= 0 && index < charcode_len else { abort("index out of bounds") }
   for char_count = 0, utf16_offset = 0
@@ -144,7 +144,7 @@ pub fn codepoint_at(self : String, index : Int) -> Char {
 /// inspect!(s.codepoint_length(), content = "6"); // 6 actual characters
 /// inspect!(s.charcode_length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
 /// ```
-pub fn codepoint_length(self : String) -> Int {
+pub fn String::codepoint_length(self : String) -> Int {
   let charcode_len = self.charcode_length()
   for char_count = 0, len = 0
       char_count < charcode_len
@@ -230,6 +230,7 @@ pub fn String::substring(self : String, start~ : Int = 0, end? : Int) -> String 
   unsafe_substring(self, start, end)
 }
 
+///|
 test "substring/basic" {
   let s = "hello, world"
   inspect!(s.substring(start=0, end=5), content="hello")
@@ -237,6 +238,7 @@ test "substring/basic" {
   inspect!(s.substring(), content="hello, world")
 }
 
+///|
 test "substring/empty" {
   let s = "test"
   inspect!(s.substring(start=2, end=2), content="")
@@ -244,6 +246,7 @@ test "substring/empty" {
   inspect!("".substring(), content="")
 }
 
+///|
 test "panic substring/invalid_range" {
   let s = "test"
   ignore(s.substring(start=-1))
@@ -251,6 +254,7 @@ test "panic substring/invalid_range" {
   ignore(s.substring(start=3, end=2))
 }
 
+///|
 test "substring/basic" {
   inspect!("Hello world".substring(start=0, end=5), content="Hello")
   inspect!("Hello world".substring(start=6, end=11), content="world")
@@ -258,6 +262,7 @@ test "substring/basic" {
   inspect!("Hello world".substring(start=6), content="world")
 }
 
+///|
 test "substring/boundary" {
   inspect!("".substring(start=0, end=0), content="")
   inspect!("a".substring(start=0, end=1), content="a")
@@ -266,6 +271,7 @@ test "substring/boundary" {
   inspect!("abc".substring(start=0, end=3), content="abc")
 }
 
+///|
 test "panic substring/out_of_bounds" {
   ignore("hello".substring(start=-1, end=4))
   ignore("hello".substring(start=6, end=4))

@@ -3,14 +3,16 @@ package moonbitlang/core/sorted_map
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn from_array[K : Compare, V](Array[(K, V)]) -> T[K, V]
+
 fn from_iter[K : Compare, V](Iter[(K, V)]) -> T[K, V]
 
 fn new[K, V]() -> T[K, V]
 
-fn of[K : Compare, V](Array[(K, V)]) -> T[K, V]
+fn of[K : Compare, V](Array[(K, V)]) -> T[K, V] //deprecated
 
 // Types and methods
-type T
+type T[K, V]
 impl T {
   add[K : Compare, V](Self[K, V], K, V) -> Unit
   clear[K, V](Self[K, V]) -> Unit
@@ -23,7 +25,6 @@ impl T {
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Array[K]
-  op_equal[K : Eq, V : Eq](Self[K, V], Self[K, V]) -> Bool
   op_get[K : Compare, V](Self[K, V], K) -> V?
   op_set[K : Compare, V](Self[K, V], K, V) -> Unit
   range[K : Compare, V](Self[K, V], K, K) -> Iter2[K, V]
@@ -32,6 +33,7 @@ impl T {
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   values[K, V](Self[K, V]) -> Array[V]
 }
+impl[K : Eq, V : Eq] Eq for T[K, V]
 impl[K : Show, V : Show] Show for T[K, V]
 impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K, V]
 

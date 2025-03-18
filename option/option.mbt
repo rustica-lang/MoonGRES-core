@@ -38,13 +38,14 @@ pub fn Option::when[T](condition : Bool, value : () -> T) -> T? {
   }
 }
 
+// ///|
 // test "when" {
 //   let result = when(true, fn() { "Hello, World!" })
 //   let result2 = when(false, fn() { "Hello, World!" })
 //   assert_eq!(result, Some("Hello, World!"))
 //   assert_eq!(result2, None)
 // }
-
+//
 // ///|
 // /// The `unless` function returns an `Option` value based on a condition.
 // ///
@@ -62,38 +63,41 @@ pub fn Option::when[T](condition : Bool, value : () -> T) -> T? {
 // pub fn unless[T](condition : Bool, value : () -> T) -> T? {
 //   when(not(condition), value)
 // }
-
+//
+// ///|
 // test "unless" {
 //   let result = unless(true, fn() { "Hello, World!" })
 //   let result2 = unless(false, fn() { "Hello, World!" })
 //   assert_eq!(result, None)
 //   assert_eq!(result2, Some("Hello, World!"))
 // }
-
+//
 // ///|
 // /// Creates an empty `Option` of type `T`.
 // pub fn empty[T]() -> T? {
 //   None
 // }
-
+//
+// ///|
 // test "empty" {
 //   let x : Int? = None
 //   let y : Int? = empty()
 //   assert_eq!(x, y)
 // }
-
+//
 // ///|
 // /// Creates an `Option` that contains a value.
 // pub fn some[T](value : T) -> T? {
 //   Some(value)
 // }
-
+//
+// ///|
 // test "some" {
 //   let x : Int? = Some(5)
 //   let y : Int? = some(5)
 //   assert_eq!(x, y)
 // }
-
+//
 // ///|
 // /// Maps the value of an `Option` using a provided function.
 // ///
@@ -112,14 +116,15 @@ pub fn Option::when[T](condition : Bool, value : () -> T) -> T? {
 //     None => None
 //   }
 // }
-
+//
+// ///|
 // test "map" {
 //   let a = Option::Some(5)
 //   let b : Int? = None
 //   assert_eq!(a.map(fn(x) { x * 2 }), Some(10))
 //   assert_eq!(b.map(fn(x) { x * 2 }), None)
 // }
-
+//
 // ///|
 // /// Returns the provided default result (if none), or applies a function to the contained value (if any).
 // /// Arguments passed to map_or are eagerly evaluated; if you are passing the result of a function call, it is recommended to use `map_or_else`, which is lazily evaluated.
@@ -136,14 +141,15 @@ pub fn Option::when[T](condition : Bool, value : () -> T) -> T? {
 //     Some(x) => f(x)
 //   }
 // }
-
+//
+// ///|
 // test "map_or" {
 //   let a = Option::Some("foo")
 //   let b : String? = Option::None
 //   assert_eq!(a.map_or(42, fn(x) { x.length() }), 3)
 //   assert_eq!(b.map_or(42, fn(x) { x.length() }), 42)
 // }
-
+//
 // ///|
 // /// Computes a default function result (if none), or applies a different function to the contained value (if any).
 // ///
@@ -159,7 +165,8 @@ pub fn Option::when[T](condition : Bool, value : () -> T) -> T? {
 //     Some(x) => f(x)
 //   }
 // }
-
+//
+// ///|
 // test "map_or_else" {
 //   let k = 21
 //   let a = Option::Some("foo")
@@ -188,13 +195,14 @@ pub fn bind[T, U](self : T?, f : (T) -> U?) -> U? {
   }
 }
 
+// ///|
 // test "bind" {
 //   let a = Option::Some(5)
 //   let b : Int? = None
 //   assert_eq!(a.bind(fn(x) { Some(x * 2) }), Some(10))
 //   assert_eq!(b.bind(fn(x) { Some(x * 2) }), None)
 // }
-
+//
 // ///|
 // /// Flattens an `Option` of `Option` into a single `Option`.
 // ///
@@ -214,14 +222,15 @@ pub fn bind[T, U](self : T?, f : (T) -> U?) -> U? {
 //     None => None
 //   }
 // }
-
+//
+// ///|
 // test "flatten" {
 //   let a : Int?? = Some(Some(42))
 //   assert_eq!(flatten(a), Some(42))
 //   let b : Int?? = Some(None)
 //   assert_eq!(flatten(b), None)
 // }
-
+//
 // ///|
 // /// Checks if the option is empty.
 // pub fn is_empty[T](self : T?) -> Bool {
@@ -230,14 +239,15 @@ pub fn bind[T, U](self : T?, f : (T) -> U?) -> U? {
 //     _ => false
 //   }
 // }
-
+//
+// ///|
 // test "is_empty" {
 //   let x = Option::Some(3)
 //   let y : Int? = None
 //   assert_false!(x.is_empty())
 //   assert_true!(y.is_empty())
 // }
-
+//
 // ///|
 // /// Filters the option by applying the given predicate function `f`.
 // ///
@@ -256,7 +266,8 @@ pub fn bind[T, U](self : T?, f : (T) -> U?) -> U? {
 //     None => None
 //   }
 // }
-
+//
+// ///|
 // test "filter" {
 //   let x = Option::Some(3)
 //   assert_eq!(x.filter(fn(x) { x > 5 }), None)
@@ -272,6 +283,7 @@ pub fn or[T](self : T?, default : T) -> T {
   }
 }
 
+// ///|
 // test "or" {
 //   let x = Option::Some(3)
 //   assert_eq!(x.or(5), 3)
@@ -289,12 +301,13 @@ pub fn or_else[T](self : T?, default : () -> T) -> T {
   }
 }
 
+// ///|
 // test "or else" {
 //   let x = Option::Some(3)
 //   assert_eq!(x.or_else(fn() { 5 }), 3)
 //   assert_eq!((None : Int?).or_else(fn() { 5 }), 5)
 // }
-
+//
 // ///|
 // /// Return the contained `Some` value or the result of the `T::default()`.
 // pub fn or_default[T : Default](self : T?) -> T {
@@ -303,15 +316,16 @@ pub fn or_else[T](self : T?, default : () -> T) -> T {
 //     Some(t) => t
 //   }
 // }
-
+//
+// ///|
 // test "or default" {
 //   let x = Option::Some(3)
 //   assert_eq!(x.or_default(), 3)
 //   assert_eq!((None : Int?).or_default(), 0)
 // }
-
+//
 // ///|
-// pub fn compare[X : Compare](self : X?, other : X?) -> Int {
+// pub impl[X : Compare] Compare for X? with compare(self, other) {
 //   match self {
 //     None =>
 //       match other {
@@ -325,7 +339,8 @@ pub fn or_else[T](self : T?, default : () -> T) -> T {
 //       }
 //   }
 // }
-
+//
+// ///|
 // test "compare" {
 //   let some1 = Option::Some(1)
 //   let some2 = Option::Some(2)
@@ -340,7 +355,7 @@ pub fn or_else[T](self : T?, default : () -> T) -> T {
 
 ///|
 /// `None`
-pub fn Option::default[X]() -> X? {
+pub impl[X] Default for X? with default() {
   None
 }
 
@@ -351,7 +366,8 @@ pub fn Option::default[X]() -> X? {
 //     None => Iter::empty()
 //   }
 // }
-
+//
+// ///|
 // test "iter" {
 //   let x = Option::Some(42)
 //   let exb = StringBuilder::new(size_hint=0)
@@ -387,6 +403,7 @@ pub fn or_error[T, Err : Error](self : T?, err : Err) -> T!Err {
   }
 }
 
+// ///|
 // test "or error" {
 //   assert_eq!(
 //     try {
@@ -405,7 +422,7 @@ pub fn or_error[T, Err : Error](self : T?, err : Err) -> T!Err {
 //     "This is ok",
 //   )
 // }
-
+//
 // ///|
 // pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for X? with arbitrary(
 //   i,
@@ -417,7 +434,8 @@ pub fn or_error[T, Err : Error](self : T?, err : Err) -> T!Err {
 //     Some(@quickcheck.Arbitrary::arbitrary(i, rs))
 //   }
 // }
-
+//
+// ///|
 // test "arbitrary" {
 //   let samples : Array[Int?] = @quickcheck.samples(10)
 //   inspect!(

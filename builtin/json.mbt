@@ -30,7 +30,7 @@ pub(open) trait ToJson {
 }
 
 ///|
-pub fn Bool::to_json(self : Bool) -> Json {
+pub impl ToJson for Bool with to_json(self : Bool) -> Json {
   if self {
     True
   } else {
@@ -39,27 +39,27 @@ pub fn Bool::to_json(self : Bool) -> Json {
 }
 
 ///|
-pub fn Int::to_json(self : Int) -> Json {
+pub impl ToJson for Int with to_json(self : Int) -> Json {
   Number(self.to_double())
 }
 
 ///|
-pub fn Int64::to_json(self : Int64) -> Json {
+pub impl ToJson for Int64 with to_json(self : Int64) -> Json {
   String::to_json(self.to_string())
 }
 
 // ///|
-// pub fn UInt::to_json(self : UInt) -> Json {
+// pub impl ToJson for UInt with to_json(self : UInt) -> Json {
 //   Number(self.to_uint64().to_double())
 // }
-
+//
 // ///|
-// pub fn UInt64::to_json(self : UInt64) -> Json {
+// pub impl ToJson for UInt64 with to_json(self : UInt64) -> Json {
 //   String::to_json(self.to_string())
 // }
 
 ///|
-pub fn Double::to_json(self : Double) -> Json {
+pub impl ToJson for Double with to_json(self : Double) -> Json {
   if self != self ||
     self > 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double() ||
     self < 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double() {
@@ -69,95 +69,59 @@ pub fn Double::to_json(self : Double) -> Json {
 }
 
 ///|
-pub fn Float::to_json(self : Float) -> Json {
+pub impl ToJson for Float with to_json(self : Float) -> Json {
   Number(self.to_double())
 }
 
-// ///|
-// fn escape_json_string(str : String) -> String {
-//   fn to_hex_digit(i : Int) -> Char {
-//     if i < 10 {
-//       Char::from_int('0'.to_int() + i)
-//     } else {
-//       Char::from_int('a'.to_int() + (i - 10))
-//     }
-//   }
-
-//   let len = str.length()
-//   let buf = StringBuilder::new(size_hint=len)
-//   for i in 0..<len {
-//     let c = str[i]
-//     match c {
-//       '\n' => buf.write_string("\\n")
-//       '\r' => buf.write_string("\\r")
-//       '\b' => buf.write_string("\\b")
-//       '\t' => buf.write_string("\\t")
-//       _ => {
-//         let code = c.to_int()
-//         if code == 0x0C {
-//           buf.write_string("\\f")
-//         } else if code < 0x20 {
-//           buf.write_string("\\u00")
-//           buf.write_char(to_hex_digit(code / 16))
-//           buf.write_char(to_hex_digit(code % 16))
-//         } else {
-//           buf.write_char(c)
-//         }
-//       }
-//     }
-//   }
-//   buf.to_string()
-// }
-
 ///|
-pub fn String::to_json(self : String) -> Json {
+pub impl ToJson for String with to_json(self : String) -> Json {
   String(self)
 }
 
 // ///|
-// pub fn Char::to_json(self : Char) -> Json {
+// pub impl ToJson for Char with to_json(self : Char) -> Json {
 //   String(self.to_string())
 // }
 
 // ///|
-// pub fn BigInt::to_json(self : BigInt) -> Json {
+// pub impl ToJson for BigInt with to_json(self : BigInt) -> Json {
 //   String(self.to_string())
 // }
 
 ///|
-pub fn Array::to_json[X : ToJson](self : Array[X]) -> Json {
+pub impl[X : ToJson] ToJson for Array[X] with to_json(self) {
   Array(self.map(ToJson::to_json))
 }
 
 // ///|
-// pub fn FixedArray::to_json[X : ToJson](self : FixedArray[X]) -> Json {
+// pub impl[X : ToJson] ToJson for FixedArray[X] with to_json(self) {
 //   let len = self.length()
 //   if len == 0 {
 //     return []
 //   }
-//   let res = Array::make(self.length(), ToJson::to_json(self[0]))
-//   for i in 1..<len {
-//     res[i] = ToJson::to_json(self[i])
+//   let res = Array::make_uninit(self.length())
+//   for i, x in self {
+//     res.unsafe_set(i, ToJson::to_json(x))
 //   }
 //   Array(res)
 // }
 
 // ///|
-// pub fn ArrayView::to_json[X : ToJson](self : ArrayView[X]) -> Json {
+// pub impl[X : ToJson] ToJson for ArrayView[X] with to_json(self) {
 //   let len = self.length()
 //   if len == 0 {
 //     return []
 //   }
-//   let res = Array::make(self.length(), ToJson::to_json(self[0]))
-//   for i in 1..<len {
-//     res[i] = ToJson::to_json(self[i])
+//   let res = Array::make_uninit(self.length())
+//   for i, x in self {
+//     res.unsafe_set(i, ToJson::to_json(x))
 //   }
 //   Array(res)
 // }
 
 // ///|
-// pub fn Map::to_json[K : Show, V : ToJson](self : Map[K, V]) -> Json {
-//   let object = {}
+// pub impl[K : Show, V : ToJson] ToJson for Map[K, V] with to_json(self) {
+//   let object = Map::new(capacity=self.capacity)
 //   for k, v in self {
 //     object[k.to_string()] = v.to_json()
 //   }
@@ -165,24 +129,26 @@ pub fn Array::to_json[X : ToJson](self : Array[X]) -> Json {
 // }
 
 // ///|
-// pub fn Set::to_json[X : ToJson](self : Set[X]) -> Json {
-//   let array = []
+// pub impl[X : ToJson] ToJson for Set[X] with to_json(self) {
+//   let res = Array::make_uninit(self.size)
+//   let mut i = 0
 //   for v in self {
-//     array.push(v.to_json())
+//     res.unsafe_set(i, v.to_json())
+//     i += 1
 //   }
-//   Array(array)
+//   Array(res)
 // }
-
+//
 // ///|
-// pub fn Option::to_json[T : ToJson](self : T?) -> Json {
+// pub impl[T : ToJson] ToJson for T? with to_json(self) {
 //   match self {
 //     None => Null
 //     Some(value) => [value.to_json()]
 //   }
 // }
-
+//
 // ///|
-// pub fn Result::to_json[Ok : ToJson, Err : ToJson](
+// pub impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err] with to_json(
 //   self : Result[Ok, Err]
 // ) -> Json {
 //   match self {
@@ -190,14 +156,14 @@ pub fn Array::to_json[X : ToJson](self : Array[X]) -> Json {
 //     Err(err) => { "Err": err.to_json() }
 //   }
 // }
-
+//
 // ///|
 // //| unit
-// pub fn Unit::to_json(_self : Unit) -> Json {
+// pub impl ToJson for Unit with to_json(_self) {
 //   Null
 // }
-
+//
 // ///|
-// pub fn Json::default() -> Json {
+// pub impl Default for Json with default() {
 //   false
 // }

@@ -64,24 +64,29 @@
 //   strings : Array[String],
 //   separator~ : String = ""
 // ) -> String {
-//   let buf = StringBuilder::new()
-//   if separator == "" {
-//     for s in strings {
-//       buf.write_string(s)
-//     }
-//   } else {
-//     match strings {
-//       [] => ()
-//       [hd, .. tl] => {
-//         buf.write_string(hd)
+//   match strings {
+//     [] => ""
+//     [hd, .. tl] => {
+//       let mut size_hint = hd.length()
+//       for s in tl {
+//         size_hint += s.length() + separator.length()
+//       }
+//       size_hint = size_hint << 1
+//       let buf = StringBuilder::new(size_hint~)
+//       buf.write_string(hd)
+//       if separator == "" {
+//         for s in tl {
+//           buf.write_string(s)
+//         }
+//       } else {
 //         for s in tl {
 //           buf.write_string(separator)
 //           buf.write_string(s)
 //         }
 //       }
+//       buf.to_string()
 //     }
 //   }
-//   buf.to_string()
 // }
 
 // ///|
@@ -94,7 +99,7 @@
 // /// Compare two strings.
 // /// String with longer length is bigger.
 // /// strings of the same length are compared in lexicalgraphic order.
-// pub fn compare(self : String, other : String) -> Int {
+// pub impl Compare for String with compare(self, other) {
 //   let len = self.length()
 //   match len.compare(other.length()) {
 //     0 => {
@@ -109,10 +114,10 @@
 //     order => order
 //   }
 // }
-
+//
 // ///|
 // /// The empty string
-// pub fn String::default() -> String {
+// pub impl Default for String with default() {
 //   ""
 // }
 
@@ -184,7 +189,7 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 //   }
 //   rv
 // }
-
+//
 // ///|
 // pub fn rev_fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
 //   let mut rv = init
@@ -193,7 +198,7 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 //   }
 //   rv
 // }
-
+//
 // ///|
 // /// Returns an iterator that yields characters from the end to the start of the string. This function handles
 // /// Unicode surrogate pairs correctly, ensuring that characters are not split across surrogate pairs.
@@ -229,25 +234,25 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 //         let c2 = self.unsafe_charcode_at(index - 1)
 //         if is_leading_surrogate(c2) {
 //           let c = code_point_of_surrogate_pair(c2, c1)
-//           guard let IterContinue = yield_(c) else { x => break x }
+//           guard yield_(c) is IterContinue else { break IterEnd }
 //           continue index - 2
 //         }
 //       }
 //       // TODO: handle garbage input
-//       guard let IterContinue = yield_(Char::from_int(c1)) else { x => break x }
-
+//       guard yield_(Char::from_int(c1)) is IterContinue else { break IterEnd }
+//
 //     } else {
 //       IterContinue
 //     }
 //   })
 // }
-
+//
 // ///|
 // /// Removes all leading and trailing spaces.
 // pub fn trim_space(self : String) -> String {
 //   self.trim(" \n\r\t")
 // }
-
+//
 // ///|
 // /// Removes all leading and trailing chars contained in the given string.
 // pub fn trim(self : String, trim_set : String) -> String {
@@ -257,12 +262,12 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 //     self.trim_start(trim_set).trim_end(trim_set)
 //   }
 // }
-
+//
 // ///|
 // pub fn contains_char(self : String, c : Char) -> Bool {
 //   self.iter().any(fn(ch) { ch == c })
 // }
-
+//
 // ///|
 // /// Removes all leading chars contained in the given string.
 // pub fn trim_start(self : String, trim_set : String) -> String {
@@ -288,7 +293,7 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 //     ""
 //   }
 // }
-
+//
 // ///|
 // /// Removes all trailing chars contained in the given string.
 // pub fn trim_end(self : String, trim_set : String) -> String {
@@ -314,13 +319,13 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 //     ""
 //   }
 // }
-
+//
 // ///|
 // /// Returns true if this string is empty.
 // pub fn is_empty(self : String) -> Bool {
 //   self == ""
 // }
-
+//
 // ///|
 // /// Returns true if this string is blank.
 // pub fn is_blank(self : String) -> Bool {
@@ -330,22 +335,27 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 ///|
 /// Returns the first index of the sub string.
 pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
-  let from = if from < 0 {
-    0
-  } else if from >= self.length() {
-    self.length() - 1
-  } else {
-    from
-  }
   let len = self.length()
   let sub_len = str.length()
-  let max_idx = len - sub_len
+
+  // Handle empty substring case
   if sub_len == 0 {
-    return 0
+    // Return 0 for empty string in empty string
+    if len == 0 {
+      return 0
+    }
+    // Bound from within valid range and return it
+    return if from < 0 { 0 } else if from >= len { len } else { from }
   }
+
+  // If substring is longer than string, it can't be found
   if sub_len > len {
     return -1
   }
+
+  // Bound the starting position
+  let from = if from < 0 { 0 } else if from >= len { len - 1 } else { from }
+  let max_idx = len - sub_len
   let first = str[0]
   let mut i = from
   while i <= max_idx {
@@ -355,14 +365,12 @@ pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
     }
     // check the rest
     if i <= max_idx {
-      let mut j = i + 1
-      let mut k = 1
-      let end = j + sub_len - 1
-      while j < end && self[j] == str[k] {
-        j += 1
-        k += 1
-      }
-      if j == end {
+      for j = 1; j < sub_len; j = j + 1 {
+        if self[i + j] != str[j] {
+          break
+        }
+      } else {
+        // the substring is found
         return i
       }
     }
@@ -478,16 +486,16 @@ pub fn starts_with(self : String, str : String) -> Bool {
 // /// let result = input.split(separator).collect()
 // /// assert_eq!(result, ["a", "b", "c", "d"])
 // /// ```
-// pub fn split(self : String, seperator : String) -> Iter[String] {
+// pub fn split(self : String, separator : String) -> Iter[String] {
 //   let len = self.length()
-//   let sep_len = seperator.length()
+//   let sep_len = separator.length()
 //   if sep_len == 0 {
 //     return self.iter().map(fn(c) { c.to_string() })
 //   }
 //   Iter::new(fn(yield_) {
 //     let mut start = 0
 //     while start < len {
-//       let end = self.index_of(seperator, from=start)
+//       let end = self.index_of(separator, from=start)
 //       if end < 0 {
 //         if yield_(self.substring(start~)) == IterEnd {
 //           break IterEnd
@@ -663,13 +671,13 @@ pub fn starts_with(self : String, str : String) -> Bool {
 // ///
 // /// ```moonbit
 // /// let s = "Hello🤣🤣🤣"
-// /// inspect!(s.rev_get(0), content="'🤣'")
-// /// inspect!(s.rev_get(4), content="'l'")
+// /// inspect!(s.rev_get(0), content="🤣")
+// /// inspect!(s.rev_get(4), content="l")
 // /// ```
 // ///
 // /// # Panics
 // ///
-// /// Panics if the index is out of bounds.
+// /// @alert unsafe "Panics if the index is out of bounds."
 // pub fn String::rev_get(self : String, index : Int) -> Char {
 //   guard index >= 0 else { abort("index out of bounds") }
 //   for utf16_offset = self.charcode_length() - 1, char_count = 0

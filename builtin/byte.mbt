@@ -110,6 +110,46 @@
 // }
 
 // ///|
+// /// Compares two `Byte` values for equality.
+// ///
+// /// Parameters:
+// ///
+// /// - `self` : The first `Byte` value to compare.
+// /// - `that` : The second `Byte` value to compare.
+// ///
+// /// Returns `true` if the two `Byte` values are equal, otherwise `false`.
+// pub impl Eq for Byte with op_equal(self : Byte, that : Byte) -> Bool {
+//   self.to_int() == that.to_int()
+// }
+//
+// ///|
+// /// Adds two `Byte` values together and returns the result as a `Byte`.
+// ///
+// /// Parameters:
+// ///
+// /// - `byte1` : The first `Byte` value to be added.
+// /// - `byte2` : The second `Byte` value to be added.
+// ///
+// /// Returns the sum of `byte1` and `byte2` as a `Byte`.
+// pub fn Byte::op_add(self : Byte, that : Byte) -> Byte {
+//   (self.to_int() + that.to_int()).to_byte()
+// }
+//
+// ///|
+// /// Subtracts the second byte from the first byte and returns the result as a
+// /// byte.
+// ///
+// /// Parameters:
+// ///
+// /// - `self` : The byte from which the second byte will be subtracted.
+// /// - `that` : The byte to subtract from the first byte.
+// ///
+// /// Returns the result of the subtraction as a byte.
+// pub fn Byte::op_sub(self : Byte, that : Byte) -> Byte {
+//   (self.to_int() - that.to_int()).to_byte()
+// }
+//
+// ///|
 // /// Compares two `Byte` values and returns an integer indicating their relative
 // /// order.
 // ///
@@ -122,10 +162,10 @@
 // /// - A value less than 0 indicates that `byte1` is less than `byte2`.
 // /// - A value of 0 indicates that `byte1` is equal to `byte2`.
 // /// - A value greater than 0 indicates that `byte1` is greater than `byte2`.
-// pub fn Byte::compare(self : Byte, that : Byte) -> Int {
+// pub impl Compare for Byte with compare(self : Byte, that : Byte) -> Int {
 //   self.to_int().compare(that.to_int())
 // }
-
+//
 // ///|
 // fn alphabet(self : Int) -> String {
 //   match self {
@@ -148,7 +188,7 @@
 //     _ => abort("impossible")
 //   }
 // }
-
+//
 // ///|
 // /// Converts a `Byte` to its string representation in hexadecimal format.
 // ///
@@ -164,7 +204,7 @@
 //   let lo = alphabet(i % 16)
 //   "b'\\x\{hi}\{lo}'"
 // }
-
+//
 // ///|
 // /// Implements the `Hash` trait for `Byte` type by converting the byte to an
 // /// integer and using it as the hash value.
@@ -183,8 +223,10 @@
 // ///   inspect!(Hash::hash(b), content="66") // ASCII value of 'B'
 // /// }
 // /// ```
-// pub impl Hash for Byte with hash(self) { self.to_int() }
-
+// pub impl Hash for Byte with hash(self) {
+//   self.to_int()
+// }
+//
 // ///|
 // /// Implements the `Hash` trait for `Byte` type by providing a `hash_combine`
 // /// method that combines a byte value with a hasher.
@@ -216,7 +258,7 @@
 /// - None
 ///
 /// Returns the default `Byte` value, which is `b'\x00'`.
-pub fn Byte::default() -> Byte {
+pub impl Default for Byte with default() {
   b'\x00'
 }
 

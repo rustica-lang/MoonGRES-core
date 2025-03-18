@@ -16,7 +16,7 @@
 /// Reinterpret the byte sequence as Bytes.
 fn FixedArray::unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
 
-// ///| 
+// ///|
 // /// Creates a new byte sequence of the specified length, where each byte is
 // /// initialized using a function that maps indices to bytes.
 // ///
@@ -85,7 +85,7 @@ fn FixedArray::unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
 // ///|
 // /// Return a new unchecked string, containing the subsequence of `self` that
 // /// starts at `byte_offset` and has length `byte_length`.
-// /// 
+// ///
 // /// @alert deprecated "Use `to_unchecked_string` instead"
 // /// @coverage.skip
 // pub fn Bytes::sub_string(
@@ -125,11 +125,11 @@ fn FixedArray::unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
 // }
 
 // ///|
-// /// Return an unchecked string, containing the subsequence of `self` that starts at 
-// /// `offset` and has length `length`. Both `offset` and `length` 
+// /// Return an unchecked string, containing the subsequence of `self` that starts at
+// /// `offset` and has length `length`. Both `offset` and `length`
 // /// are indexed by byte.
-// /// 
-// /// Note this function does not validate the encoding of the byte sequence, 
+// ///
+// /// Note this function does not validate the encoding of the byte sequence,
 // /// it simply copy the bytes into a new String.
 // pub fn Bytes::to_unchecked_string(
 //   self : Bytes,
@@ -222,39 +222,6 @@ fn FixedArray::unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
 // }
 
 // ///|
-// /// Copy bytes from a BytesView into a fixed array of bytes.
-// ///
-// /// Parameters:
-// ///
-// /// * `self` : The destination fixed array of bytes.
-// /// * `bytes_offset` : The starting position in the destination array where bytes will be copied.
-// /// * `src` : The source BytesView to copy from.
-// ///
-// /// Throws a panic if:
-// /// * `bytes_offset` is negative
-// /// * The destination array is too small to hold all bytes from the source BytesView
-// ///
-// /// Example:
-// ///
-// /// ```moonbit
-// ///  let arr = FixedArray::make(4, b'\x00')
-// ///  let view = b"\x01\x02\x03"[1:]
-// ///  arr.blit_from_bytesview(1, view)
-// ///  inspect!(arr, content="[b'\\x00', b'\\x02', b'\\x03', b'\\x00']")
-// /// ```
-// pub fn FixedArray::blit_from_bytesview(
-//   self : FixedArray[Byte],
-//   bytes_offset : Int,
-//   src : BytesView
-// ) -> Unit {
-//   let src_len = src.length()
-//   guard bytes_offset >= 0 && bytes_offset + src_len - 1 < self.length()
-//   for i = 0, j = bytes_offset; i < src_len; i = i + 1, j = j + 1 {
-//     self[j] = src[i]
-//   }
-// }
-
-// ///|
 // /// Creates a new byte sequence by copying all bytes from the input sequence.
 // ///
 // /// Parameters:
@@ -307,7 +274,7 @@ fn FixedArray::unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
 // ///   inspect!(buf[1], content="b'\\x82'")
 // ///   inspect!(buf[2], content="b'\\xAC'")
 // /// }
-// /// 
+// ///
 // /// test "panic FixedArray::set_utf8_char/invalid_char" {
 // ///   let buf = FixedArray::make(4, b'\x00')
 // ///   ignore(buf.set_utf8_char(0, Char::from_int(0x110000))) // Invalid Unicode code point
@@ -454,7 +421,7 @@ fn FixedArray::unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
 // ///   inspect!(bytes1 == bytes3, content="false")
 // /// }
 // /// ```
-// pub fn Bytes::op_equal(self : Bytes, other : Bytes) -> Bool {
+// pub impl Eq for Bytes with op_equal(self : Bytes, other : Bytes) -> Bool {
 //   if self.length() != other.length() {
 //     false
 //   } else {
@@ -468,3 +435,56 @@ fn FixedArray::unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
 //     }
 //   }
 // }
+
+///|
+/// Compares two byte sequences lexicographically. First compares the lengths of
+/// the sequences, then compares bytes pairwise until a difference is found or
+/// all bytes have been compared.
+///
+/// Parameters:
+///
+/// * `self` : The first byte sequence to compare.
+/// * `other` : The second byte sequence to compare.
+///
+/// Returns an integer indicating the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Bytes::compare" {
+///   let a = b"\x01\x02\x03"
+///   let b = b"\x01\x02\x04"
+///   inspect!(a.compare(b), content="-1") // a < b
+///   inspect!(b.compare(a), content="1") // b > a
+///   inspect!(a.compare(a), content="0") // a = a
+/// }
+///
+/// test "Bytes::compare/different_lengths" {
+///   let a = b"\x01\x02"
+///   let b = b"\x01\x02\x03"
+///   inspect!(a.compare(b), content="-1") // shorter sequence is less
+///   inspect!(b.compare(a), content="1") // longer sequence is greater
+/// }
+/// ```
+pub impl Compare for Bytes with compare(self, other) {
+  let self_len = self.length()
+  let other_len = other.length()
+  let cmp = self_len.compare(other_len)
+  if cmp != 0 {
+    return cmp
+  }
+  for i in 0..<self_len {
+    let b1 = self.unsafe_get(i)
+    let b2 = other.unsafe_get(i)
+    let cmp = b1.compare(b2)
+    if cmp != 0 {
+      break cmp
+    }
+  } else {
+    0
+  }
+}

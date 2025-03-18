@@ -104,7 +104,8 @@ fn meld[A : Compare](l : Cont[A], r : Cont[A]) -> Cont[A] {
 fn merges[A : Compare](x : @list.T[Cont[A]]) -> Cont[A] {
   loop x, Empty {
     Nil, acc => acc
-    Cons(t, rest), acc => continue rest, meld(t, acc)
+    Cons(t, Nil), acc => meld(t, acc)
+    Cons(t1, Cons(t2, rest)), acc => continue rest, meld(meld(t1, t2), acc)
   }
 }
 
@@ -127,7 +128,7 @@ pub fn pop[A : Compare](self : T[A]) -> T[A]? {
 ///|
 /// Pops the first value from the immutable priority queue.
 ///
-/// Panics if the queue is empty.
+/// @alert unsafe "Panics if the queue is empty."
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4])
@@ -245,6 +246,7 @@ pub impl[A : Hash + Compare] Hash for T[A] with hash_combine(self, hasher) {
   }
 }
 
+///|
 test "meld" {
   inspect!(meld(Empty, of([1]).body), content="Node(1, @list.of([]))")
   inspect!(meld(of([1]).body, Empty), content="Node(1, @list.of([]))")
@@ -254,6 +256,7 @@ test "meld" {
   )
 }
 
+///|
 test "merges" {
   inspect!(
     match merges((Nil : @list.T[Cont[Int]])) {

@@ -1,5 +1,6 @@
 package moonbitlang/core/array
 
+alias @moonbitlang/core/bytes as @bytes
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
@@ -8,6 +9,7 @@ alias @moonbitlang/core/quickcheck as @quickcheck
 impl FixedArray {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
+  blit_from_bytesview(Self[Byte], Int, @bytes.View) -> Unit
   contains[T : Eq](Self[T], T) -> Bool
   copy[T](Self[T]) -> Self[T]
   each[T](Self[T], (T) -> Unit) -> Unit
@@ -29,7 +31,6 @@ impl FixedArray {
   new[T](Int, () -> T) -> Self[T] //deprecated
   new_with_index[T](Int, (Int) -> T) -> Self[T] //deprecated
   op_add[T](Self[T], Self[T]) -> Self[T]
-  op_equal[T : Eq](Self[T], Self[T]) -> Bool
   rev[T](Self[T]) -> Self[T]
   rev_each[T](Self[T], (T) -> Unit) -> Unit
   rev_eachi[T](Self[T], (Int, T) -> Unit) -> Unit
@@ -44,12 +45,14 @@ impl FixedArray {
   starts_with[T : Eq](Self[T], Self[T]) -> Bool
   swap[T](Self[T], Int, Int) -> Unit
 }
+impl[T : Eq] Eq for FixedArray[T]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 
 impl Array {
   copy[T](Self[T]) -> Self[T]
   filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
   from_iter[T](Iter[T]) -> Self[T]
+  join(Self[String], String) -> String
   last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
   map_option[A, B](Self[A], (A) -> B?) -> Self[B] //deprecated
@@ -68,10 +71,24 @@ impl ArrayView {
   contains[T : Eq](Self[T], T) -> Bool
   each[T](Self[T], (T) -> Unit) -> Unit
   eachi[T](Self[T], (Int, T) -> Unit) -> Unit
+  filter[T](Self[T], (T) -> Bool) -> Array[T]
+  fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
+  iter[A](Self[A]) -> Iter[A]
+  map[T, U](Self[T], (T) -> U) -> Array[U]
+  map_inplace[T](Self[T], (T) -> T) -> Unit
+  mapi[T, U](Self[T], (Int, T) -> U) -> Array[U]
+  mapi_inplace[T](Self[T], (Int, T) -> T) -> Unit
+  rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   rev_inplace[T](Self[T]) -> Unit
 }
+impl[T : Compare] Compare for ArrayView[T]
+impl[T : Eq] Eq for ArrayView[T]
+impl[X : Show] Show for ArrayView[X]
 
 // Type aliases
+pub typealias View[T] = ArrayView[T]
 
 // Traits
 

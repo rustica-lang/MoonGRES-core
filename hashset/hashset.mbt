@@ -336,7 +336,9 @@ pub impl[K : Show] Show for T[K] with output(self, logger) {
 priv type MyString String derive(Eq)
 
 ///|
-impl Hash for MyString with hash(self) { self._.length() }
+impl Hash for MyString with hash(self) {
+  self._.length()
+}
 
 ///|
 impl Hash for MyString with hash_combine(self, hasher) {
@@ -344,8 +346,11 @@ impl Hash for MyString with hash_combine(self, hasher) {
 }
 
 ///|
-impl Show for MyString with output(self, logger) { logger.write_string(self._) }
+impl Show for MyString with output(self, logger) {
+  logger.write_string(self._)
+}
 
+///|
 test "set" {
   let m : T[MyString] = new()
   m.add("a")
@@ -362,6 +367,7 @@ test "set" {
   )
 }
 
+///|
 test "remove" {
   let m : T[MyString] = new()
   fn i(s) {
@@ -379,6 +385,7 @@ test "remove" {
   assert_eq!(m.debug_entries(), "_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_")
 }
 
+///|
 test "remove_unexist_key" {
   let m : T[MyString] = new()
   fn i(s) {
@@ -393,6 +400,7 @@ test "remove_unexist_key" {
   assert_eq!(m.debug_entries(), "_,(0,a),(0,ab),(0,abc),_,_,_,_")
 }
 
+///|
 test "grow" {
   let m : T[MyString] = new()
   fn i(s) {
@@ -421,6 +429,7 @@ test "grow" {
   )
 }
 
+///|
 test "clear" {
   let m : T[MyString] = new()
   m.clear()
@@ -429,4 +438,35 @@ test "clear" {
   for i = 0; i < m.capacity(); i = i + 1 {
     @test.same_object!(m.entries[i], None)
   }
+}
+
+///|
+pub fn to_array[K](self : T[K]) -> Array[K] {
+  let mut i = 0
+  let res = while i < self.capacity {
+    match self.entries[i] {
+      Some({ key, .. }) => {
+        i += 1
+        break Array::make(self.size, key)
+      }
+      _ => ()
+    }
+    i += 1
+  } else {
+    []
+  }
+  if not(res.is_empty()) {
+    let mut res_idx = 1
+    while res_idx < res.length() && i < self.capacity {
+      match self.entries[i] {
+        Some({ key, .. }) => {
+          res[res_idx] = key
+          res_idx += 1
+        }
+        _ => ()
+      }
+      i += 1
+    }
+  }
+  res
 }

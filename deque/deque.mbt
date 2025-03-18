@@ -585,7 +585,7 @@ pub fn T::as_views[A](self : T[A]) -> (ArrayView[A], ArrayView[A]) {
 ///   inspect!(dq1 == dq3, content="false")
 /// }
 /// ```
-pub fn op_equal[A : Eq](self : T[A], other : T[A]) -> Bool {
+pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
   if self.len != other.len {
     return false
   }
@@ -1062,16 +1062,16 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
     let head_len = cap - head
     if head_len >= len {
       for i in head..<(head + len) {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
     } else {
       for i in head..<cap {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
       for i in 0..<(len - head_len) {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
     }
@@ -1110,16 +1110,16 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
     let mut j = 0
     if head_len >= len {
       for i in head..<(head + len) {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
     } else {
       for i in head..<cap {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
       for i in 0..<(len - head_len) {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
     }
@@ -1155,16 +1155,16 @@ pub fn rev_iter[A](self : T[A]) -> Iter[A] {
     let head_len = cap - head
     if head_len >= len {
       for i = head + len - 1; i >= head; i = i - 1 {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
     } else {
       for i = len - head_len - 1; i >= 0; i = i - 1 {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
       for i = cap - 1; i >= head; i = i - 1 {
-        guard let IterContinue = yield_(buf[i]) else { x => return x }
+        guard yield_(buf[i]) is IterContinue else { return IterEnd }
 
       }
     }
@@ -1203,16 +1203,16 @@ pub fn rev_iter2[A](self : T[A]) -> Iter2[Int, A] {
     let mut j = 0
     if head_len >= len {
       for i = head + len - 1; i >= head; i = i - 1 {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
     } else {
       for i = len - head_len - 1; i >= 0; i = i - 1 {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
       for i = cap - 1; i >= head; i = i - 1 {
-        guard let IterContinue = yield_(j, buf[i]) else { x => return x }
+        guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
         j += 1
       }
     }
@@ -1256,4 +1256,28 @@ pub fn to_array[A](self : T[A]) -> Array[A] {
     }
     xs
   }
+}
+
+///|
+pub impl[A : ToJson] ToJson for T[A] with to_json(self : T[A]) -> Json {
+  let res = Array::make(self.length(), Json::Null)
+  for i, x in self {
+    res[i] = x.to_json()
+  }
+  Array(res)
+}
+
+///|
+pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json!(json, path) {
+  guard json is Array(arr) else {
+    raise @json.JsonDecodeError((path, "Deque::from_json: expected array"))
+  }
+  let len = arr.length()
+  let buf = UninitializedArray::make(len)
+  let head = 0
+  let tail = len
+  for i, x in arr {
+    buf[i] = @json.FromJson::from_json!(x, path.add_index(i))
+  }
+  { len, buf, head, tail }
 }

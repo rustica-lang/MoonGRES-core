@@ -850,7 +850,7 @@ pub fn BigInt::is_zero(self : BigInt) -> Bool {
 ///   inspect!(a.compare(a), content="0") // 42 = 42
 /// }
 /// ```
-pub fn BigInt::compare(self : BigInt, other : BigInt) -> Int {
+pub impl Compare for BigInt with compare(self, other) {
   if self.sign != other.sign {
     return if self.sign == Positive { 1 } else { -1 }
   }
@@ -897,7 +897,7 @@ pub fn BigInt::compare(self : BigInt, other : BigInt) -> Int {
 ///   inspect!(a == c, content="false")
 /// }
 /// ```
-pub fn BigInt::op_equal(self : BigInt, other : BigInt) -> Bool {
+pub impl Eq for BigInt with op_equal(self, other) {
   if self.sign != other.sign || self.len != other.len {
     return false
   }
@@ -1136,7 +1136,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
   let nb_char = radix_bit_len / 4 // number of char per limb
   let quotient = number_len / nb_char
   let mod = number_len % nb_char
-  let b_len = if mod == 0 { quotient } else { quotient + 1 }
+  let mut b_len = if mod == 0 { quotient } else { quotient + 1 }
   let b = FixedArray::make(b_len, 0U)
   if mod != 0 {
     let start = len - quotient * nb_char - mod
@@ -1149,6 +1149,9 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
     for j = 0; j < nb_char; j = j + 1 {
       b[i] = (b[i] << 4) | char_from_hex(input[start + j])
     }
+  }
+  while b[b_len - 1] == 0 && b_len > 1 {
+    b_len -= 1
   }
   { limbs: b, sign, len: b_len }
 }
@@ -1523,7 +1526,7 @@ pub fn BigInt::land(self : BigInt, other : BigInt) -> BigInt {
     x_limbs[i] = x_limbs[i] & y_limbs[i]
   }
 
-  // Check wether the result is either positive or negative
+  // Check whether the result is either positive or negative
   let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
     Negative
   } else {
@@ -1632,7 +1635,7 @@ pub fn BigInt::lor(self : BigInt, other : BigInt) -> BigInt {
     x_limbs[i] = x_limbs[i] | y_limbs[i]
   }
 
-  // Check wether the result is either positive or negative
+  // Check whether the result is either positive or negative
   let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
     Negative
   } else {
@@ -1744,7 +1747,7 @@ pub fn BigInt::lxor(self : BigInt, other : BigInt) -> BigInt {
     x_limbs[i] = x_limbs[i] ^ y_limbs[i]
   }
 
-  // Check wether the result is either positive or negative
+  // Check whether the result is either positive or negative
   let new_sign = if x_limbs[x_limbs.length() - 1] == 0xFFFFFFFFU {
     Negative
   } else {

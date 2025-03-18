@@ -23,7 +23,7 @@ priv struct Entry[K, V] {
 } derive(Show)
 
 // ///|
-// fn Entry::op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
+// impl[K : Eq, V] Eq for Entry[K, V] with op_equal(self, other) {
 //   self.hash == other.hash && self.key == other.key
 // }
 
@@ -73,6 +73,7 @@ fn power_2_above(x : Int, n : Int) -> Int {
   }
 }
 
+// ///|
 // test "power_2_above" {
 //   inspect!(power_2_above(1, 15), content="16")
 //   inspect!(power_2_above(1, 16), content="16")
@@ -504,7 +505,7 @@ pub fn Map::iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
 //     }
 //   })
 // }
-
+//
 // ///|
 // pub fn Map::values[K, V](self : Map[K, V]) -> Iter[V] {
 //   Iter::new(fn(yield_) {
@@ -518,14 +519,16 @@ pub fn Map::iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
 //     }
 //   })
 // }
-
+//
 // ///|
 // /// Converts the hash map to an array.
 // pub fn Map::to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
-//   let arr = Array::new(capacity=self.size)
+//   let arr = Array::make_uninit(self.size)
+//   let mut i = 0
 //   loop self.head {
 //     Some({ key, value, idx, .. }) => {
-//       arr.push((key, value))
+//       arr.unsafe_set(i, (key, value))
+//       i += 1
 //       continue self.list[idx].next
 //     }
 //     None => break
@@ -534,7 +537,7 @@ pub fn Map::iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
 // }
 
 ///|
-pub fn Map::op_equal[K : Hash + Eq, V : Eq](
+pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with op_equal(
   self : Map[K, V],
   that : Map[K, V]
 ) -> Bool {
@@ -573,6 +576,6 @@ pub fn Map::op_equal[K : Hash + Eq, V : Eq](
 // }
 
 ///|
-pub fn Map::default[K, V]() -> Map[K, V] {
+pub impl[K, V] Default for Map[K, V] with default() {
   Map::new()
 }

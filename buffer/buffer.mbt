@@ -190,7 +190,7 @@ pub fn new(size_hint~ : Int = 0) -> T {
 ///   )
 /// }
 /// ```
-pub fn write_string(self : T, value : String) -> Unit {
+pub impl Logger for T with write_string(self, value) {
   self.grow_if_necessary(self.len + value.length() * 2)
   self.data.blit_from_string(self.len, value, 0, value.length())
   self.len += value.length() * 2
@@ -559,12 +559,12 @@ pub fn write_bytes(self : T, value : Bytes) -> Unit {
 }
 
 ///|
-/// Writes a sequence of bytes from a BytesView into the buffer.
+/// Writes a sequence of bytes from a @bytes.View into the buffer.
 ///
 /// Parameters:
 ///
 /// * `buffer` : The buffer to write to.
-/// * `value` : The BytesView containing the bytes to write.
+/// * `value` : The View containing the bytes to write.
 ///
 /// Example:
 ///
@@ -581,7 +581,7 @@ pub fn write_bytes(self : T, value : Bytes) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn write_bytesview(self : T, value : BytesView) -> Unit {
+pub fn write_bytesview(self : T, value : @bytes.View) -> Unit {
   let val_len = value.length()
   self.grow_if_necessary(self.len + val_len)
   self.data.blit_from_bytesview(self.len, value)
@@ -614,7 +614,7 @@ pub fn write_bytesview(self : T, value : BytesView) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn write_substring(
+pub impl Logger for Buffer with write_substring(
   self : T,
   value : String,
   start : Int,
@@ -646,7 +646,7 @@ pub fn write_substring(
 /// )
 /// }
 /// ```
-pub fn write_char(self : T, value : Char) -> Unit {
+pub impl Logger for Buffer with write_char(self : T, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
   let inc = self.data.set_utf16le_char(self.len, value)
   self.len += inc

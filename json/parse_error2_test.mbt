@@ -13,29 +13,9 @@
 // limitations under the License.
 
 ///|
-/// @alert deprecated "use `@priority_queue.new` instead"
-/// @coverage.skip
-pub fn T::new[A : Compare]() -> T[A] {
-  new()
-}
-
-///|
-/// @alert deprecated "use `@priority_queue.from_array` instead"
-/// @coverage.skip
-pub fn T::from_array[A : Compare](arr : Array[A]) -> T[A] {
-  from_array(arr)
-}
-
-///|
-/// @alert deprecated "use `@priority_queue.from_iter` instead"
-/// @coverage.skip
-pub fn T::from_iter[K : Compare](iter : Iter[K]) -> T[K] {
-  from_iter(iter)
-}
-
-///|
-/// @alert deprecated "use `@priority_queue.of` instead"
-/// @coverage.skip
-pub fn T::of[A : Compare](arr : FixedArray[A]) -> T[A] {
-  of(arr)
+test "parse error" {
+  inspect!(
+    @json.parse?("[1, 2, \u000c]"),
+    content="Err(Invalid character '\\x0c' at line 1, column 7)",
+  )
 }

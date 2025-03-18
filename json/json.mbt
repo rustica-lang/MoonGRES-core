@@ -179,7 +179,8 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
   let buf = StringBuilder::new(size_hint=str.length())
   for c in str {
     match c {
-      '"' | '\\' => buf.write_string("\\\{c}")
+      '"' => buf.write_string("\\\"")
+      '\\' => buf.write_string("\\\\")
       '/' =>
         if escape_slash {
           buf.write_string("\\/")
@@ -209,7 +210,7 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 
 ///|
 /// Useful for json interpolation
-pub fn to_json(self : JsonValue) -> JsonValue {
+pub impl ToJson for JsonValue with to_json(self) {
   self
 }
 

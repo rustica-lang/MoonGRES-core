@@ -133,15 +133,16 @@ fn meld[A : Compare](x : Node[A], y : Node[A]) -> Node[A] {
 fn merges[A : Compare](x : Node[A]) -> Node[A] {
   match x {
     Nil => Nil
-    Cons(sibling~, ..) =>
-      match sibling {
-        Nil => x
-        Cons(sibling=next_sibling, ..) =>
-          match next_sibling {
-            Nil => meld(x, sibling)
-            Cons(_) => meld(merges(next_sibling), meld(x, sibling))
-          }
-      }
+    Cons(sibling=Nil, ..) => x
+    Cons(sibling=Cons(sibling=Nil, ..) as s, ..) as x => {
+      x.sibling = Nil
+      meld(x, s)
+    }
+    Cons(sibling=Cons(sibling=s2, ..) as s1, ..) as x => {
+      x.sibling = Nil
+      s1.sibling = Nil
+      meld(merges(s2), meld(x, s1))
+    }
   }
 }
 
@@ -166,13 +167,6 @@ pub fn unsafe_pop[A : Compare](self : T[A]) -> Unit {
     Cons(child~, ..) => merges(child)
   }
   self.len -= 1
-}
-
-///|
-/// @alert deprecated "Use `unsafe_pop` instead"
-/// @coverage.skip
-pub fn pop_exn[A : Compare](self : T[A]) -> Unit {
-  unsafe_pop(self)
 }
 
 ///|
@@ -266,6 +260,7 @@ pub fn of[A : Compare](arr : FixedArray[A]) -> T[A] {
   }
 }
 
+///|
 test "meld_and_merges" {
   inspect!(
     match meld(Cons(content=1, sibling=Nil, child=Nil), Nil) {
@@ -297,6 +292,7 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
   }
 }
 
+///|
 test "priority queue arbitrary" {
   let samples : Array[T[Int]] = @quickcheck.samples(20)
   inspect!(

@@ -38,9 +38,7 @@ pub(open) trait Hash {
 
 ///|
 impl Hash with hash(self) {
-  let hasher = Hasher::new()
-  hasher.combine(self)
-  hasher.finalize()
+  Hasher::new()..combine(self).finalize()
 }
 
 ///|
@@ -116,3 +114,10 @@ pub fn Logger::write_iter[T : Show](
   self.write_string(suffix)
 }
 // TODO: Logger::write_double(self:Logger, val:Double) -> Unit
+
+///|
+pub fn repr[T : Show](t : T) -> String {
+  let logger = StringBuilder::new()
+  t.output(logger)
+  logger.to_string()
+}

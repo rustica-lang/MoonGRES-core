@@ -13,46 +13,52 @@
 // limitations under the License.
 
 // ///|
-// pub impl Show for Unit with output(_self, logger) { logger.write_string("()") }
+// pub impl Show for Unit with output(_self, logger) {
+//   logger.write_string("()")
+// }
 
 ///|
 pub impl Show for Bool with output(self, logger) {
-  logger.write_string(self.to_string())
+  if self {
+    logger.write_string("true")
+  } else {
+    logger.write_string("false")
+  }
 }
 
 ///|
 pub impl Show for Int with output(self, logger) {
-  logger.write_string(self.to_string())
+  self.output(logger)
 }
 
 ///|
 pub impl Show for Int64 with output(self, logger) {
-  logger.write_string(self.to_string())
+  self.output(logger)
 }
 
 // ///|
 // pub impl Show for UInt with output(self, logger) {
-//   logger.write_string(self.to_string())
+//   self.output(logger)
 // }
-
+//
 // ///|
 // pub impl Show for UInt64 with output(self, logger) {
-//   logger.write_string(self.to_string())
+//   self.output(logger)
 // }
-
+//
 // ///|
 // pub impl Show for Byte with output(self, logger) {
 //   logger.write_string(self.to_string())
 // }
-
+//
 // ///|
 // pub impl Show for Int16 with output(self, logger) {
 //   logger.write_string(self.to_string())
 // }
-
+//
 // ///|
 // pub impl Show for UInt16 with output(self, logger) {
-//   logger.write_string(self.to_string())
+//   self.to_int().output(logger)
 // }
 
 ///|
@@ -68,28 +74,6 @@ pub impl Show for Bytes with output(self, logger) {
   logger.write_string("b\"")
   for b in self {
     let byte = b.to_int()
-    logger
-    ..write_string("\\x")
-    ..write_char(to_hex_digit(byte / 16))
-    ..write_char(to_hex_digit(byte % 16))
-    |> ignore
-  }
-  logger.write_string("\"")
-}
-
-///|
-pub impl Show for BytesView with output(self, logger) {
-  fn to_hex_digit(i : Int) -> Char {
-    if i < 10 {
-      Char::from_int('0'.to_int() + i)
-    } else {
-      Char::from_int('a'.to_int() + (i - 10))
-    }
-  }
-
-  logger.write_string("b\"")
-  for i in 0..<self.len {
-    let byte = self[i].to_int()
     logger
     ..write_string("\\x")
     ..write_char(to_hex_digit(byte / 16))
@@ -159,7 +143,20 @@ pub impl Show for String with output(self, logger) {
 }
 
 ///|
-pub impl Show for String with to_string(self) { self }
+/// This is different from `Show::output`,
+/// here it returns the original string without escaping.
+/// The rationale is in string interpolation,
+/// we want to show the original string, not the escaped one.
+/// # Examples
+///
+/// ```
+/// let str = "Hello \n"
+/// inspect!(str.to_string(), content="Hello \n")
+/// inspect!(str.escape(), content="\"Hello \\n\"")
+/// ```
+pub impl Show for String with to_string(self) {
+  self
+}
 
 // ///|
 // pub impl Show for Failure with output(self, logger) {
@@ -209,14 +206,9 @@ pub impl[X : Show] Show for Array[X] with output(self, logger) {
 }
 
 // ///|
-// pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
-//   logger.write_iter(self.iter())
-// }
-
-// ///|
 // /// Convert Char to String
 // /// @intrinsic %char.to_string
-// pub fn Char::to_string(self : Char) -> String {
+// pub impl Show for Char with to_string(self : Char) -> String {
 //   let bytes = FixedArray::make(4, Byte::default())
 //   let length = bytes.set_utf16le_char(0, self)
 //   bytes.unsafe_to_bytes().to_unchecked_string(offset=0, length~)

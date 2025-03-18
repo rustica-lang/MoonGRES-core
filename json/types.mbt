@@ -21,7 +21,7 @@
 //   line : Int // 1-based
 //   column : Int // 0-based
 // } derive(Eq)
-
+//
 // ///|
 // pub(all) type! ParseError {
 //   InvalidChar(Position, Char)
@@ -29,23 +29,34 @@
 //   InvalidNumber(Position, String)
 //   InvalidIdentEscape(Position)
 // } derive(Eq)
-
-// ///|
-// pub fn to_string(self : ParseError) -> String {
-//   match self {
-//     InvalidChar({ line, column }, c) =>
-//       "Invalid character '\{c}' at line \{line}, column \{column}"
-//     InvalidEof => "Unexpected end of file"
-//     InvalidNumber({ line, column }, s) =>
-//       "Invalid number \{s} at line \{line}, column \{column}"
-//     InvalidIdentEscape({ line, column }) =>
-//       "Invalid escape sequence in identifier at line \{line}, column \{column}"
-//   }
-// }
-
+//
 // ///|
 // pub impl Show for ParseError with output(self, logger) {
-//   logger.write_string(self.to_string())
+//   match self {
+//     InvalidChar({ line, column }, c) =>
+//       logger
+//       ..write_string("Invalid character ")
+//       ..write_string(repr(c))
+//       ..write_string(" at line ")
+//       ..write_object(line)
+//       ..write_string(", column ")
+//       .write_object(column)
+//     InvalidEof => logger.write_string("Unexpected end of file")
+//     InvalidNumber({ line, column }, s) =>
+//       logger
+//       ..write_string("Invalid number ")
+//       ..write_string(s)
+//       ..write_string(" at line ")
+//       ..write_object(line)
+//       ..write_string(", column ")
+//       .write_object(column)
+//     InvalidIdentEscape({ line, column }) =>
+//       logger
+//       ..write_string("Invalid escape sequence in identifier at line ")
+//       ..write_object(line)
+//       ..write_string(", column ")
+//       .write_object(column)
+//   }
 // }
 
 ///|

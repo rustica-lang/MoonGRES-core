@@ -12,7 +12,7 @@ fn new[K](capacity~ : Int = ..) -> T[K]
 fn of[K : Hash + Eq](FixedArray[K]) -> T[K]
 
 // Types and methods
-type T
+type T[K]
 impl T {
   add[K : Hash + Eq](Self[K], K) -> Unit
   capacity[K](Self[K]) -> Int
@@ -32,6 +32,7 @@ impl T {
   remove[K : Hash + Eq](Self[K], K) -> Unit
   size[K](Self[K]) -> Int
   symmetric_difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
+  to_array[K](Self[K]) -> Array[K]
   union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
 }
 impl[K : Show] Show for T[K]

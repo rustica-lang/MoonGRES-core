@@ -23,7 +23,7 @@ priv struct SEntry[K] {
 } derive(Show)
 
 ///|
-fn SEntry::op_equal[K : Eq](self : SEntry[K], other : SEntry[K]) -> Bool {
+impl[K : Eq] Eq for SEntry[K] with op_equal(self, other) {
   self.hash == other.hash && self.key == other.key
 }
 
@@ -425,31 +425,32 @@ pub fn Set::iter[K](self : Set[K]) -> Iter[K] {
 ///|
 /// Converts the hash set to an array.
 pub fn Set::to_array[K](self : Set[K]) -> Array[K] {
-  let arr = Array::new(capacity=self.size)
+  let res = Array::make_uninit(self.size)
+  let mut i = 0
   loop self.head {
     Some({ key, idx, .. }) => {
-      arr.push(key)
+      res.unsafe_set(i, key)
+      i += 1
       continue self.list[idx].next
     }
     None => break
   }
-  arr
+  res
 }
 
 ///|
-pub fn Set::op_equal[K : Eq](self : Set[K], that : Set[K]) -> Bool {
-  if self.size != that.size {
+pub impl[K : Hash + Eq] Eq for Set[K] with op_equal(self, other) {
+  if self.size != other.size {
     return false
   }
-  loop self.head, that.head {
-    None, None => true
-    Some({ key: k1, idx: i1, .. }), Some({ key: k2, idx: i2, .. }) => {
-      if k1 != k2 {
+  loop self.head {
+    None => true
+    Some({ key, idx, .. }) => {
+      if not(other.contains(key)) {
         return false
       }
-      continue self.list[i1].next, that.list[i2].next
+      continue self.list[idx].next
     }
-    _, _ => false
   }
 }
 

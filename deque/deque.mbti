@@ -1,5 +1,7 @@
 package moonbitlang/core/deque
 
+alias @moonbitlang/core/json as @json
+
 // Values
 fn from_array[A](Array[A]) -> T[A]
 
@@ -10,7 +12,7 @@ fn new[A](capacity~ : Int = ..) -> T[A]
 fn of[A](FixedArray[A]) -> T[A]
 
 // Types and methods
-type T
+type T[A]
 impl T {
   as_views[A](Self[A]) -> (ArrayView[A], ArrayView[A])
   back[A](Self[A]) -> A?
@@ -32,7 +34,6 @@ impl T {
   mapi[A, U](Self[A], (Int, A) -> U) -> Self[U]
   new[A](capacity~ : Int = ..) -> Self[A] //deprecated
   of[A](FixedArray[A]) -> Self[A] //deprecated
-  op_equal[A : Eq](Self[A], Self[A]) -> Bool
   op_get[A](Self[A], Int) -> A
   op_set[A](Self[A], Int, A) -> Unit
   pop_back[A](Self[A]) -> A?
@@ -55,7 +56,10 @@ impl T {
   unsafe_pop_back[A](Self[A]) -> Unit
   unsafe_pop_front[A](Self[A]) -> Unit
 }
+impl[A : Eq] Eq for T[A]
 impl[A : Show] Show for T[A]
+impl[A : ToJson] ToJson for T[A]
+impl[A : @json.FromJson] @json.FromJson for T[A]
 
 // Type aliases
 

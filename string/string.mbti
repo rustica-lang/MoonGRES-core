@@ -27,11 +27,9 @@ impl StringView {
 impl Show for StringView
 
 impl String {
-  compare(String, String) -> Int
   concat(Array[String], separator~ : String = ..) -> String
   contains(String, String) -> Bool
   contains_char(String, Char) -> Bool
-  default() -> String
   ends_with(String, String) -> Bool
   fold[A](String, init~ : A, (A, Char) -> A) -> A
   from_array(Array[Char]) -> String
@@ -69,8 +67,11 @@ impl String {
   trim_space(String) -> String
   trim_start(String, String) -> String
 }
+impl Compare for String
+impl Default for String
 
 // Type aliases
+pub typealias View = StringView
 
 // Traits
 

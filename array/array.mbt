@@ -91,12 +91,12 @@
 
 // ///|
 // /// Shuffle the array using Knuth shuffle
-// /// 
+// ///
 // /// To use this function, you need to provide a rand function, which takes an integer as it upper bound
 // /// and returns an integer.
 // /// *rand n* is expected to returns a uniformly distribution integer between 0 and n - 1
 // /// # Example
-// /// 
+// ///
 // /// ```
 // /// let arr = [1, 2, 3, 4, 5]
 // /// fn rand(upper : Int) -> Int {
@@ -117,12 +117,12 @@
 
 // ///|
 // /// Shuffle the array using Knuth shuffle
-// /// 
+// ///
 // /// To use this function, you need to provide a rand function, which takes an integer as it upper bound
 // /// and returns an integer.
 // /// *rand n* is expected to returns a uniformly distribution integer between 0 and n - 1
 // /// # Example
-// /// 
+// ///
 // /// ```
 // /// let arr = [1, 2, 3, 4, 5]
 // /// fn rand(upper : Int) -> Int {
@@ -139,14 +139,14 @@
 
 // ///|
 // /// Returns a new array containing the elements of the original array that satisfy the given predicate.
-// /// 
+// ///
 // /// # Arguments
-// /// 
+// ///
 // /// * `self` - The array to filter.
 // /// * `f` - The predicate function.
-// /// 
+// ///
 // /// # Returns
-// /// 
+// ///
 // pub fn filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
 //   let result = []
 //   self.each(fn {
@@ -161,14 +161,14 @@
 
 // ///|
 // /// Returns a new array containing the elements of the original array that satisfy the given predicate.
-// /// 
+// ///
 // /// # Arguments
-// /// 
+// ///
 // /// * `self` - The array to filter.
 // /// * `f` - The predicate function.
-// /// 
+// ///
 // /// # Returns
-// /// 
+// ///
 // /// @alert deprecated "Use `Array::filter_map` instead"
 // pub fn map_option[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
 //   self.filter_map(f)
@@ -210,3 +210,8 @@ pub fn last[A](self : Array[A]) -> A? {
 //   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
 //   Array::makei(len, fn(x) { X::arbitrary(x, rs) })
 // }
+
+///|
+pub fn join(self : Array[String], separator : String) -> String {
+  @string.concat(self, separator~)
+}

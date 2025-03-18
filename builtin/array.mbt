@@ -241,7 +241,7 @@ pub fn Array::op_set[T](self : Array[T], index : Int, value : T) -> Unit {
 ///   inspect!(arr1 == arr3, content="false")
 /// }
 /// ```
-pub fn Array::op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
+pub impl[T : Eq] Eq for Array[T] with op_equal(self, other) {
   let self_len = self.length()
   let other_len = other.length()
   guard self_len == other_len else { return false }
@@ -285,13 +285,14 @@ pub fn Array::op_equal[T : Eq](self : Array[T], other : Array[T]) -> Bool {
 // ///   inspect!(arr1.compare(arr1), content="0") // arr1 = arr1
 // /// }
 // /// ```
-// pub fn Array::compare[T : Compare](self : Array[T], other : Array[T]) -> Int {
+// pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
 //   let len_self = self.length()
 //   let len_other = other.length()
-//   guard let 0 = len_self.compare(len_other) else { x => return x }
+//   let cmp = len_self.compare(len_other)
+//   guard cmp is 0 else { return cmp }
 //   for i in 0..<len_self {
 //     let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
-//     guard let 0 = cmp else { x => break x }
+//     guard cmp is 0 else { break cmp }
 
 //   } else {
 //     0
@@ -1252,13 +1253,18 @@ pub fn Array::map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
 // /// let v = [[3, 4], [5, 6]].flatten()
 // /// assert_eq!(v, [3, 4, 5, 6])
 // /// ```
-// /// TODO: perf could be improved by pre-allocated
 // pub fn Array::flatten[T](self : Array[Array[T]]) -> Array[T] {
-//   let v = []
-//   for arr in self {
-//     v.append(arr)
+//   let mut len = 0
+//   for x in self {
+//     len += x.length()
 //   }
-//   v
+//   let res = Array::make_uninit(len)
+//   let mut i = 0
+//   for xs in self {
+//     res.unsafe_blit(i, xs, 0, xs.length())
+//     i += xs.length()
+//   }
+//   res
 // }
 
 // ///|
@@ -1666,7 +1672,7 @@ pub fn Array::map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
 pub fn Array::iter[T](self : Array[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for v in self {
-      guard let IterContinue = yield_(v) else { x => break x }
+      guard yield_(v) is IterContinue else { break IterEnd }
 
     } else {
       IterContinue
@@ -1698,14 +1704,14 @@ pub fn Array::iter[T](self : Array[T]) -> Iter[T] {
 // pub fn Array::rev_iter[T](self : Array[T]) -> Iter[T] {
 //   Iter::new(fn(yield_) {
 //     for i = self.length() - 1; i >= 0; i = i - 1 {
-//       guard let IterContinue = yield_(self.unsafe_get(i)) else { x => break x }
-
+//       guard yield_(self.unsafe_get(i)) is IterContinue else { break IterEnd }
+//
 //     } else {
 //       IterContinue
 //     }
 //   })
 // }
-
+//
 // ///|
 // /// Returns an iterator that provides both indices and values of the array in
 // /// order.
@@ -1730,14 +1736,14 @@ pub fn Array::iter[T](self : Array[T]) -> Iter[T] {
 // pub fn Array::iter2[A](self : Array[A]) -> Iter2[Int, A] {
 //   Iter2::new(fn(yield_) {
 //     for i, v in self {
-//       guard let IterContinue = yield_(i, v) else { x => break x }
-
+//       guard yield_(i, v) is IterContinue else { break IterEnd }
+//
 //     } else {
 //       IterContinue
 //     }
 //   })
 // }
-
+//
 // ///|
 // /// Creates a new empty array.
 // ///
@@ -1752,6 +1758,6 @@ pub fn Array::iter[T](self : Array[T]) -> Iter[T] {
 // ///   inspect!(arr.is_empty(), content="true")
 // /// }
 // /// ```
-// pub fn Array::default[T]() -> Array[T] {
+// pub impl[T] Default for Array[T] with default() {
 //   []
 // }
