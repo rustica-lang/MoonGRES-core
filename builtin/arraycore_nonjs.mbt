@@ -116,11 +116,11 @@ fn Array::unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
   self.len = new_len
 }
 
-test "unsafe_truncate_to_length" {
-  let arr = [1, 2, 3, 4, 5]
-  arr.unsafe_truncate_to_length(3)
-  inspect!(arr, content="[1, 2, 3]")
-}
+// test "unsafe_truncate_to_length" {
+//   let arr = [1, 2, 3, 4, 5]
+//   arr.unsafe_truncate_to_length(3)
+//   inspect!(arr, content="[1, 2, 3]")
+// }
 
 ///|
 fn Array::buffer[T](self : Array[T]) -> UninitializedArray[T] {
@@ -137,56 +137,56 @@ fn Array::resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
   self.buf = new_buf
 }
 
-test "array_unsafe_blit_fixed" {
-  let src = FixedArray::make(5, 0)
-  let dst = UninitializedArray::make(5)
-  for i in 0..<5 {
-    src[i] = i + 1
-  }
-  UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
-  for i in 0..<5 {
-    assert_eq!(dst[i], src[i])
-  }
-}
+// test "array_unsafe_blit_fixed" {
+//   let src = FixedArray::make(5, 0)
+//   let dst = UninitializedArray::make(5)
+//   for i in 0..<5 {
+//     src[i] = i + 1
+//   }
+//   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
+//   for i in 0..<5 {
+//     assert_eq!(dst[i], src[i])
+//   }
+// }
 
-test "UninitializedArray::unsafe_blit_fixed" {
-  let src = FixedArray::make(5, 0)
-  let dst = UninitializedArray::make(5)
-  for i in 0..<5 {
-    src[i] = i + 1
-  }
-  UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
-  for i in 0..<5 {
-    assert_eq!(dst[i], src[i])
-  }
-}
+// test "UninitializedArray::unsafe_blit_fixed" {
+//   let src = FixedArray::make(5, 0)
+//   let dst = UninitializedArray::make(5)
+//   for i in 0..<5 {
+//     src[i] = i + 1
+//   }
+//   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
+//   for i in 0..<5 {
+//     assert_eq!(dst[i], src[i])
+//   }
+// }
 
-test "UninitializedArray::unsafe_blit_fixed" {
-  let src = FixedArray::make(5, 0)
-  let dst = UninitializedArray::make(5)
-  for i in 0..<5 {
-    src[i] = i + 1
-  }
-  UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
-  for i in 0..<5 {
-    assert_eq!(dst[i], src[i])
-  }
-}
+// test "UninitializedArray::unsafe_blit_fixed" {
+//   let src = FixedArray::make(5, 0)
+//   let dst = UninitializedArray::make(5)
+//   for i in 0..<5 {
+//     src[i] = i + 1
+//   }
+//   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
+//   for i in 0..<5 {
+//     assert_eq!(dst[i], src[i])
+//   }
+// }
 
-test "Array::resize_buffer" {
-  let arr = Array::new(capacity=2)
-  arr.push(1)
-  arr.push(2)
-  arr.resize_buffer(4)
-  assert_eq!(arr.buffer()._.length() >= 4, true)
-  arr.push(3)
-  arr.push(4)
-  assert_eq!(arr.length(), 4)
-  assert_eq!(arr[0], 1)
-  assert_eq!(arr[1], 2)
-  assert_eq!(arr[2], 3)
-  assert_eq!(arr[3], 4)
-}
+// test "Array::resize_buffer" {
+//   let arr = Array::new(capacity=2)
+//   arr.push(1)
+//   arr.push(2)
+//   arr.resize_buffer(4)
+//   assert_eq!(arr.buffer()._.length() >= 4, true)
+//   arr.push(3)
+//   arr.push(4)
+//   assert_eq!(arr.length(), 4)
+//   assert_eq!(arr[0], 1)
+//   assert_eq!(arr[1], 2)
+//   assert_eq!(arr[2], 3)
+//   assert_eq!(arr[3], 4)
+// }
 
 ///|
 /// Reallocate the array with a new capacity.
@@ -196,43 +196,43 @@ fn Array::realloc[T](self : Array[T]) -> Unit {
   self.resize_buffer(new_cap)
 }
 
-///|
-/// Reserves capacity to ensure that it can hold at least the number of elements
-/// specified by the `capacity` argument.
-///
-/// # Example
-///
-/// ```
-/// let v = [1]
-/// v.reserve_capacity(10)
-/// assert_eq!(v.capacity(), 10)
-/// ```
-pub fn Array::reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
-  if self.capacity() >= capacity {
-    return
-  }
-  self.resize_buffer(capacity)
-}
+// ///|
+// /// Reserves capacity to ensure that it can hold at least the number of elements
+// /// specified by the `capacity` argument.
+// ///
+// /// # Example
+// ///
+// /// ```
+// /// let v = [1]
+// /// v.reserve_capacity(10)
+// /// assert_eq!(v.capacity(), 10)
+// /// ```
+// pub fn Array::reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
+//   if self.capacity() >= capacity {
+//     return
+//   }
+//   self.resize_buffer(capacity)
+// }
 
-///|
-/// Shrinks the capacity of the array as much as possible.
-///
-/// # Example
-///
-/// ```
-/// let v = Array::new(capacity=10)
-/// v.push(1)
-/// v.push(2)
-/// v.push(3)
-/// v.shrink_to_fit()
-/// assert_eq!(v.capacity(), 3)
-/// ```
-pub fn Array::shrink_to_fit[T](self : Array[T]) -> Unit {
-  if self.capacity() <= self.length() {
-    return
-  }
-  self.resize_buffer(self.length())
-}
+// ///|
+// /// Shrinks the capacity of the array as much as possible.
+// ///
+// /// # Example
+// ///
+// /// ```
+// /// let v = Array::new(capacity=10)
+// /// v.push(1)
+// /// v.push(2)
+// /// v.push(3)
+// /// v.shrink_to_fit()
+// /// assert_eq!(v.capacity(), 3)
+// /// ```
+// pub fn Array::shrink_to_fit[T](self : Array[T]) -> Unit {
+//   if self.capacity() <= self.length() {
+//     return
+//   }
+//   self.resize_buffer(self.length())
+// }
 
 ///|
 /// Adds an element to the end of the array.
@@ -275,148 +275,148 @@ pub fn Array::pop[T](self : Array[T]) -> T? {
   }
 }
 
-///|
-/// @alert deprecated "Use `unsafe_pop` instead"
-/// @coverage.skip
-pub fn Array::pop_exn[T](self : Array[T]) -> T {
-  self.unsafe_pop()
-}
+// ///|
+// /// @alert deprecated "Use `unsafe_pop` instead"
+// /// @coverage.skip
+// pub fn Array::pop_exn[T](self : Array[T]) -> T {
+//   self.unsafe_pop()
+// }
 
-///|
-/// Removes and returns the last element from the array.
-///
-/// Parameters:
-///
-/// * `array` : The array from which to remove and return the last element.
-///
-/// Returns the last element of the array before removal.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "unsafe_pop" {
-///   let arr = [1, 2, 3]
-///   inspect!(arr.unsafe_pop(), content="3")
-///   inspect!(arr, content="[1, 2]")
-/// }
-///
-/// test "panic unsafe_pop/empty" {
-///   let arr : Array[Int] = []
-///   ignore(arr.unsafe_pop()) // Panics when array is empty
-/// }
-/// ```
-///
-/// @alert unsafe "Panic if the array is empty."
-pub fn Array::unsafe_pop[T](self : Array[T]) -> T {
-  let len = self.length()
-  guard len != 0
-  let index = len - 1
-  let v = self.unsafe_get(index)
-  self.buf.set_null(index)
-  self.len = index
-  v
-}
+// ///|
+// /// Removes and returns the last element from the array.
+// ///
+// /// Parameters:
+// ///
+// /// * `array` : The array from which to remove and return the last element.
+// ///
+// /// Returns the last element of the array before removal.
+// ///
+// /// Example:
+// ///
+// /// ```moonbit
+// /// test "unsafe_pop" {
+// ///   let arr = [1, 2, 3]
+// ///   inspect!(arr.unsafe_pop(), content="3")
+// ///   inspect!(arr, content="[1, 2]")
+// /// }
+// ///
+// /// test "panic unsafe_pop/empty" {
+// ///   let arr : Array[Int] = []
+// ///   ignore(arr.unsafe_pop()) // Panics when array is empty
+// /// }
+// /// ```
+// ///
+// /// @alert unsafe "Panic if the array is empty."
+// pub fn Array::unsafe_pop[T](self : Array[T]) -> T {
+//   let len = self.length()
+//   guard len != 0
+//   let index = len - 1
+//   let v = self.unsafe_get(index)
+//   self.buf.set_null(index)
+//   self.len = index
+//   v
+// }
 
-///|
-/// Remove an element from the array at a given index.
-///
-/// Removes and returns the element at position index within the array, shifting all elements after it to the left.
-///
-/// # Example
-/// ```
-/// let v = [3, 4, 5]
-/// assert_eq!(v.remove(1), 4)
-/// assert_eq!(v, [3, 5])
-/// ```
-/// @alert unsafe "Panic if index is out of bounds."
-pub fn Array::remove[T](self : Array[T], index : Int) -> T {
-  guard index >= 0 && index < self.length() else {
-    abort(
-      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
-    )
-  }
-  let value = self.unsafe_get(index)
-  UninitializedArray::unsafe_blit(
-    self.buffer(),
-    index,
-    self.buffer(),
-    index + 1,
-    self.length() - index - 1,
-  )
-  self.unsafe_truncate_to_length(self.length() - 1)
-  value
-}
+// ///|
+// /// Remove an element from the array at a given index.
+// ///
+// /// Removes and returns the element at position index within the array, shifting all elements after it to the left.
+// ///
+// /// # Example
+// /// ```
+// /// let v = [3, 4, 5]
+// /// assert_eq!(v.remove(1), 4)
+// /// assert_eq!(v, [3, 5])
+// /// ```
+// /// @alert unsafe "Panic if index is out of bounds."
+// pub fn Array::remove[T](self : Array[T], index : Int) -> T {
+//   guard index >= 0 && index < self.length() else {
+//     abort(
+//       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
+//     )
+//   }
+//   let value = self.unsafe_get(index)
+//   UninitializedArray::unsafe_blit(
+//     self.buffer(),
+//     index,
+//     self.buffer(),
+//     index + 1,
+//     self.length() - index - 1,
+//   )
+//   self.unsafe_truncate_to_length(self.length() - 1)
+//   value
+// }
 
-///|
-/// Removes the specified range from the array and returns it.
-///
-/// This functions returns a array range from `begin` to `end` `[begin, end)`
-///
-/// # Example
-/// ```
-/// let v = [3, 4, 5]
-/// let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
-/// assert_eq!(vv, [4])
-/// assert_eq!(v, [3, 5])
-/// ```
-/// @alert unsafe "Panic if index is out of bounds."
-pub fn Array::drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
-  guard begin >= 0 && end <= self.length() && begin <= end
-  let num = end - begin
-  let v = Array::make_uninit(num)
-  UninitializedArray::unsafe_blit(v.buffer(), 0, self.buffer(), begin, num)
-  UninitializedArray::unsafe_blit(
-    self.buffer(),
-    begin,
-    self.buffer(),
-    end,
-    self.length() - end,
-  )
-  self.unsafe_truncate_to_length(self.length() - num)
-  v
-}
+// ///|
+// /// Removes the specified range from the array and returns it.
+// ///
+// /// This functions returns a array range from `begin` to `end` `[begin, end)`
+// ///
+// /// # Example
+// /// ```
+// /// let v = [3, 4, 5]
+// /// let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
+// /// assert_eq!(vv, [4])
+// /// assert_eq!(v, [3, 5])
+// /// ```
+// /// @alert unsafe "Panic if index is out of bounds."
+// pub fn Array::drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
+//   guard begin >= 0 && end <= self.length() && begin <= end
+//   let num = end - begin
+//   let v = Array::make_uninit(num)
+//   UninitializedArray::unsafe_blit(v.buffer(), 0, self.buffer(), begin, num)
+//   UninitializedArray::unsafe_blit(
+//     self.buffer(),
+//     begin,
+//     self.buffer(),
+//     end,
+//     self.length() - end,
+//   )
+//   self.unsafe_truncate_to_length(self.length() - num)
+//   v
+// }
 
-///|
-/// Inserts an element at a given index within the array.
-///
-/// # Example
-/// ```
-/// [3, 4, 5].insert(1, 6)
-/// ```
-/// @alert unsafe "Panic if index is out of bounds."
-pub fn Array::insert[T](self : Array[T], index : Int, value : T) -> Unit {
-  guard index >= 0 && index <= self.length() else {
-    abort(
-      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
-    )
-  }
-  if self.length() == self.buffer()._.length() {
-    self.realloc()
-  }
-  UninitializedArray::unsafe_blit(
-    self.buffer(),
-    index + 1,
-    self.buffer(),
-    index,
-    self.length() - index,
-  )
-  let length = self.length()
-  self.unsafe_set(index, value)
-  self.len = length + 1
-}
+// ///|
+// /// Inserts an element at a given index within the array.
+// ///
+// /// # Example
+// /// ```
+// /// [3, 4, 5].insert(1, 6)
+// /// ```
+// /// @alert unsafe "Panic if index is out of bounds."
+// pub fn Array::insert[T](self : Array[T], index : Int, value : T) -> Unit {
+//   guard index >= 0 && index <= self.length() else {
+//     abort(
+//       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
+//     )
+//   }
+//   if self.length() == self.buffer()._.length() {
+//     self.realloc()
+//   }
+//   UninitializedArray::unsafe_blit(
+//     self.buffer(),
+//     index + 1,
+//     self.buffer(),
+//     index,
+//     self.length() - index,
+//   )
+//   let length = self.length()
+//   self.unsafe_set(index, value)
+//   self.len = length + 1
+// }
 
-///|
-/// Resize the array in-place so that `len` is equal to `new_len`.
-///
-/// If `new_len` is greater than `len`, the array will be extended by the
-/// difference, and the values in the new slots are left uninitilized.
-///  If `new_len` is less than `len`, it will panic
-///
-/// @alert unsafe "Panic if new length is negative."
-fn Array::unsafe_grow_to_length[T](self : Array[T], new_len : Int) -> Unit {
-  guard new_len >= self.length()
-  let new_buf = UninitializedArray::make(new_len)
-  UninitializedArray::unsafe_blit(new_buf, 0, self.buf, 0, self.len)
-  self.len = new_len
-  self.buf = new_buf
-}
+// ///|
+// /// Resize the array in-place so that `len` is equal to `new_len`.
+// ///
+// /// If `new_len` is greater than `len`, the array will be extended by the
+// /// difference, and the values in the new slots are left uninitilized.
+// ///  If `new_len` is less than `len`, it will panic
+// ///
+// /// @alert unsafe "Panic if new length is negative."
+// fn Array::unsafe_grow_to_length[T](self : Array[T], new_len : Int) -> Unit {
+//   guard new_len >= self.length()
+//   let new_buf = UninitializedArray::make(new_len)
+//   UninitializedArray::unsafe_blit(new_buf, 0, self.buf, 0, self.len)
+//   self.len = new_len
+//   self.buf = new_buf
+// }

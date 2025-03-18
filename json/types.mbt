@@ -12,44 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-/// @alert deprecated "Definition of json is moved to builtin package, use `Json` instead"
-pub(all) typealias JsonValue = Json
+// ///|
+// /// @alert deprecated "Definition of json is moved to builtin package, use `Json` instead"
+// pub(all) typealias JsonValue = Json
+
+// ///|
+// pub(all) struct Position {
+//   line : Int // 1-based
+//   column : Int // 0-based
+// } derive(Eq)
+
+// ///|
+// pub(all) type! ParseError {
+//   InvalidChar(Position, Char)
+//   InvalidEof
+//   InvalidNumber(Position, String)
+//   InvalidIdentEscape(Position)
+// } derive(Eq)
+
+// ///|
+// pub fn to_string(self : ParseError) -> String {
+//   match self {
+//     InvalidChar({ line, column }, c) =>
+//       "Invalid character '\{c}' at line \{line}, column \{column}"
+//     InvalidEof => "Unexpected end of file"
+//     InvalidNumber({ line, column }, s) =>
+//       "Invalid number \{s} at line \{line}, column \{column}"
+//     InvalidIdentEscape({ line, column }) =>
+//       "Invalid escape sequence in identifier at line \{line}, column \{column}"
+//   }
+// }
+
+// ///|
+// pub impl Show for ParseError with output(self, logger) {
+//   logger.write_string(self.to_string())
+// }
 
 ///|
-pub(all) struct Position {
-  line : Int // 1-based
-  column : Int // 0-based
-} derive(Eq)
-
-///|
-pub(all) type! ParseError {
-  InvalidChar(Position, Char)
-  InvalidEof
-  InvalidNumber(Position, String)
-  InvalidIdentEscape(Position)
-} derive(Eq)
-
-///|
-pub fn to_string(self : ParseError) -> String {
-  match self {
-    InvalidChar({ line, column }, c) =>
-      "Invalid character '\{c}' at line \{line}, column \{column}"
-    InvalidEof => "Unexpected end of file"
-    InvalidNumber({ line, column }, s) =>
-      "Invalid number \{s} at line \{line}, column \{column}"
-    InvalidIdentEscape({ line, column }) =>
-      "Invalid escape sequence in identifier at line \{line}, column \{column}"
-  }
-}
-
-///|
-pub impl Show for ParseError with output(self, logger) {
-  logger.write_string(self.to_string())
-}
-
-///|
-pub impl Show for JsonValue with output(self, logger) {
+pub impl Show for Json with output(self, logger) {
   match self {
     Null => logger.write_string("Null")
     True => logger.write_string("True")

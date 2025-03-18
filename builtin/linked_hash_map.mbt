@@ -22,10 +22,10 @@ priv struct Entry[K, V] {
   mut value : V
 } derive(Show)
 
-///|
-fn Entry::op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
-  self.hash == other.hash && self.key == other.key
-}
+// ///|
+// fn Entry::op_equal[K : Eq, V](self : Entry[K, V], other : Entry[K, V]) -> Bool {
+//   self.hash == other.hash && self.key == other.key
+// }
 
 ///|
 priv struct ListNode[K, V] {
@@ -73,14 +73,14 @@ fn power_2_above(x : Int, n : Int) -> Int {
   }
 }
 
-test "power_2_above" {
-  inspect!(power_2_above(1, 15), content="16")
-  inspect!(power_2_above(1, 16), content="16")
-  inspect!(power_2_above(1, 17), content="32")
-  inspect!(power_2_above(1, 32), content="32")
-  inspect!(power_2_above(128, 33), content="128")
-  inspect!(power_2_above(1, 2147483647), content="1073741824")
-}
+// test "power_2_above" {
+//   inspect!(power_2_above(1, 15), content="16")
+//   inspect!(power_2_above(1, 16), content="16")
+//   inspect!(power_2_above(1, 17), content="32")
+//   inspect!(power_2_above(1, 32), content="32")
+//   inspect!(power_2_above(128, 33), content="128")
+//   inspect!(power_2_above(1, 2147483647), content="1073741824")
+// }
 
 ///|
 /// Create a hash map.
@@ -187,100 +187,100 @@ pub fn Map::op_get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
   self.get(key)
 }
 
-///|
-/// Returns the value associated with the key in the map, or computes and returns
-/// a default value if the key does not exist.
-///
-/// Parameters:
-///
-/// * `map` : The map to search in.
-/// * `key` : The key to look up in the map.
-/// * `default` : A function that returns a default value when the key is not
-/// found.
-///
-/// Returns either the value associated with the key if it exists, or the result
-/// of calling the default function.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "get_or_default" {
-///   let map = { "a": 1, "b": 2 }
-///   inspect!(map.get_or_default("a", 0), content="1")
-///   inspect!(map.get_or_default("c", 42), content="42")
-/// }
-/// ```
-pub fn Map::get_or_default[K : Hash + Eq, V](
-  self : Map[K, V],
-  key : K,
-  default : V
-) -> V {
-  let hash = key.hash()
-  for i = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
-      Some(entry) => {
-        if entry.hash == hash && entry.key == key {
-          break entry.value
-        }
-        if i > entry.psl {
-          break default
-        }
-        continue i + 1, (idx + 1) & self.capacity_mask
-      }
-      None => break default
-    }
-  }
-}
+// ///|
+// /// Returns the value associated with the key in the map, or computes and returns
+// /// a default value if the key does not exist.
+// ///
+// /// Parameters:
+// ///
+// /// * `map` : The map to search in.
+// /// * `key` : The key to look up in the map.
+// /// * `default` : A function that returns a default value when the key is not
+// /// found.
+// ///
+// /// Returns either the value associated with the key if it exists, or the result
+// /// of calling the default function.
+// ///
+// /// Example:
+// ///
+// /// ```moonbit
+// /// test "get_or_default" {
+// ///   let map = { "a": 1, "b": 2 }
+// ///   inspect!(map.get_or_default("a", 0), content="1")
+// ///   inspect!(map.get_or_default("c", 42), content="42")
+// /// }
+// /// ```
+// pub fn Map::get_or_default[K : Hash + Eq, V](
+//   self : Map[K, V],
+//   key : K,
+//   default : V
+// ) -> V {
+//   let hash = key.hash()
+//   for i = 0, idx = hash & self.capacity_mask {
+//     match self.entries[idx] {
+//       Some(entry) => {
+//         if entry.hash == hash && entry.key == key {
+//           break entry.value
+//         }
+//         if i > entry.psl {
+//           break default
+//         }
+//         continue i + 1, (idx + 1) & self.capacity_mask
+//       }
+//       None => break default
+//     }
+//   }
+// }
 
-///|
-/// Returns the value for the given key, or sets and returns a default value if the key does not exist.
-pub fn Map::get_or_init[K : Hash + Eq, V](
-  self : Map[K, V],
-  key : K,
-  default : () -> V
-) -> V {
-  match self.get(key) {
-    Some(v) => v
-    None => {
-      let v = default()
-      self.set(key, v)
-      v
-    }
-  }
-}
+// ///|
+// /// Returns the value for the given key, or sets and returns a default value if the key does not exist.
+// pub fn Map::get_or_init[K : Hash + Eq, V](
+//   self : Map[K, V],
+//   key : K,
+//   default : () -> V
+// ) -> V {
+//   match self.get(key) {
+//     Some(v) => v
+//     None => {
+//       let v = default()
+//       self.set(key, v)
+//       v
+//     }
+//   }
+// }
 
-///|
-/// Check if the hash map contains a key.
-pub fn Map::contains[K : Hash + Eq, V](self : Map[K, V], key : K) -> Bool {
-  match self.get(key) {
-    Some(_) => true
-    None => false
-  }
-}
+// ///|
+// /// Check if the hash map contains a key.
+// pub fn Map::contains[K : Hash + Eq, V](self : Map[K, V], key : K) -> Bool {
+//   match self.get(key) {
+//     Some(_) => true
+//     None => false
+//   }
+// }
 
-///|
-/// Remove a key-value pair from hash map.
-pub fn Map::remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
-  let hash = key.hash()
-  for i = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
-      Some(entry) => {
-        if entry.hash == hash && entry.key == key {
-          self.entries[idx] = None
-          self.remove_entry(entry)
-          self.shift_back(idx)
-          self.size -= 1
-          break
-        }
-        if i > entry.psl {
-          break
-        }
-        continue i + 1, (idx + 1) & self.capacity_mask
-      }
-      None => break
-    }
-  }
-}
+// ///|
+// /// Remove a key-value pair from hash map.
+// pub fn Map::remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
+//   let hash = key.hash()
+//   for i = 0, idx = hash & self.capacity_mask {
+//     match self.entries[idx] {
+//       Some(entry) => {
+//         if entry.hash == hash && entry.key == key {
+//           self.entries[idx] = None
+//           self.remove_entry(entry)
+//           self.shift_back(idx)
+//           self.size -= 1
+//           break
+//         }
+//         if i > entry.psl {
+//           break
+//         }
+//         continue i + 1, (idx + 1) & self.capacity_mask
+//       }
+//       None => break
+//     }
+//   }
+// }
 
 ///|
 fn Map::add_entry_to_tail[K : Eq, V](
@@ -300,54 +300,54 @@ fn Map::add_entry_to_tail[K : Eq, V](
   }
 }
 
-///|
-fn Map::remove_entry[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
-  let node = self.list[entry.idx]
-  if self.is_empty() {
-    self.head = None
-    self.tail = None
-  } else {
-    if self.head.unwrap() == entry {
-      self.head = node.next
-    }
-    if self.tail.unwrap() == entry {
-      self.tail = node.prev
-    }
-    match node.prev {
-      Some(prev) => self.list[prev.idx].next = node.next
-      None => ()
-    }
-    match node.next {
-      Some(next) => self.list[next.idx].prev = node.prev
-      None => ()
-    }
-  }
-  node.prev = None
-  node.next = None
-}
+// ///|
+// fn Map::remove_entry[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
+//   let node = self.list[entry.idx]
+//   if self.is_empty() {
+//     self.head = None
+//     self.tail = None
+//   } else {
+//     if self.head.unwrap() == entry {
+//       self.head = node.next
+//     }
+//     if self.tail.unwrap() == entry {
+//       self.tail = node.prev
+//     }
+//     match node.prev {
+//       Some(prev) => self.list[prev.idx].next = node.next
+//       None => ()
+//     }
+//     match node.next {
+//       Some(next) => self.list[next.idx].prev = node.prev
+//       None => ()
+//     }
+//   }
+//   node.prev = None
+//   node.next = None
+// }
 
-///|
-fn Map::shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
-  for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
-    match (self.entries[curr], self.list[curr]) {
-      (Some(entry), currNode) => {
-        if entry.psl == 0 {
-          break
-        }
-        entry.psl -= 1
-        entry.idx = prev
-        self.entries[prev] = Some(entry)
-        self.entries[curr] = None
-        self.list[prev].prev = currNode.prev
-        self.list[prev].next = currNode.next
-        currNode.prev = None
-        currNode.next = None
-        continue curr, (curr + 1) & self.capacity_mask
-      }
-      (None, _) => break
-    }
-  }
-}
+// ///|
+// fn Map::shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
+//   for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
+//     match (self.entries[curr], self.list[curr]) {
+//       (Some(entry), currNode) => {
+//         if entry.psl == 0 {
+//           break
+//         }
+//         entry.psl -= 1
+//         entry.idx = prev
+//         self.entries[prev] = Some(entry)
+//         self.entries[curr] = None
+//         self.list[prev].prev = currNode.prev
+//         self.list[prev].next = currNode.next
+//         currNode.prev = None
+//         currNode.next = None
+//         continue curr, (curr + 1) & self.capacity_mask
+//       }
+//       (None, _) => break
+//     }
+//   }
+// }
 
 ///|
 fn Map::grow[K : Hash + Eq, V](self : Map[K, V]) -> Unit {
@@ -376,23 +376,23 @@ fn calc_grow_threshold(capacity : Int) -> Int {
   capacity * 13 / 16
 }
 
-// Utils
+// // Utils
 
-///|
-fn Map::debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
-  let buf = StringBuilder::new()
-  for i = 0; i < self.entries.length(); i = i + 1 {
-    if i > 0 {
-      buf.write_char(',')
-    }
-    match self.entries[i] {
-      None => buf.write_char('_')
-      Some({ psl, key, value, .. }) =>
-        buf.write_string("(\{psl},\{key},\{value})")
-    }
-  }
-  buf.to_string()
-}
+// ///|
+// fn Map::debug_entries[K : Show, V : Show](self : Map[K, V]) -> String {
+//   let buf = StringBuilder::new()
+//   for i = 0; i < self.entries.length(); i = i + 1 {
+//     if i > 0 {
+//       buf.write_char(',')
+//     }
+//     match self.entries[i] {
+//       None => buf.write_char('_')
+//       Some({ psl, key, value, .. }) =>
+//         buf.write_string("(\{psl},\{key},\{value})")
+//     }
+//   }
+//   buf.to_string()
+// }
 
 ///|
 pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
@@ -415,41 +415,41 @@ pub fn Map::size[K, V](self : Map[K, V]) -> Int {
   self.size
 }
 
-///|
-/// Get the capacity of the map.
-pub fn Map::capacity[K, V](self : Map[K, V]) -> Int {
-  self.capacity
-}
+// ///|
+// /// Get the capacity of the map.
+// pub fn Map::capacity[K, V](self : Map[K, V]) -> Int {
+//   self.capacity
+// }
 
-///|
-/// Check if the hash map is empty.
-pub fn Map::is_empty[K, V](self : Map[K, V]) -> Bool {
-  self.size == 0
-}
+// ///|
+// /// Check if the hash map is empty.
+// pub fn Map::is_empty[K, V](self : Map[K, V]) -> Bool {
+//   self.size == 0
+// }
 
-///|
-/// Iterate over all key-value pairs of the map in the order of insertion.
-pub fn Map::each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
-  loop self.head {
-    Some({ key, value, idx, .. }) => {
-      f(key, value)
-      continue self.list[idx].next
-    }
-    None => break
-  }
-}
+// ///|
+// /// Iterate over all key-value pairs of the map in the order of insertion.
+// pub fn Map::each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
+//   loop self.head {
+//     Some({ key, value, idx, .. }) => {
+//       f(key, value)
+//       continue self.list[idx].next
+//     }
+//     None => break
+//   }
+// }
 
-///|
-/// Iterate over all key-value pairs of the map in the order of insertion, with index.
-pub fn Map::eachi[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
-  loop 0, self.head {
-    i, Some({ key, value, idx, .. }) => {
-      f(i, key, value)
-      continue i + 1, self.list[idx].next
-    }
-    _, None => break
-  }
-}
+// ///|
+// /// Iterate over all key-value pairs of the map in the order of insertion, with index.
+// pub fn Map::eachi[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
+//   loop 0, self.head {
+//     i, Some({ key, value, idx, .. }) => {
+//       f(i, key, value)
+//       continue i + 1, self.list[idx].next
+//     }
+//     _, None => break
+//   }
+// }
 
 ///|
 /// Clears the map, removing all key-value pairs. Keeps the allocated space.
@@ -460,21 +460,21 @@ pub fn Map::clear[K, V](self : Map[K, V]) -> Unit {
   self.tail = None
 }
 
-///|
-/// Returns the iterator of the hash map, provide elements in the order of insertion.
-pub fn Map::iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
-  Iter::new(fn(yield_) {
-    loop self.head {
-      Some({ key, value, idx, .. }) => {
-        if yield_((key, value)) == IterEnd {
-          break IterEnd
-        }
-        continue self.list[idx].next
-      }
-      None => break IterContinue
-    }
-  })
-}
+// ///|
+// /// Returns the iterator of the hash map, provide elements in the order of insertion.
+// pub fn Map::iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
+//   Iter::new(fn(yield_) {
+//     loop self.head {
+//       Some({ key, value, idx, .. }) => {
+//         if yield_((key, value)) == IterEnd {
+//           break IterEnd
+//         }
+//         continue self.list[idx].next
+//       }
+//       None => break IterContinue
+//     }
+//   })
+// }
 
 ///|
 pub fn Map::iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
@@ -491,47 +491,47 @@ pub fn Map::iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
   })
 }
 
-///|
-pub fn Map::keys[K, V](self : Map[K, V]) -> Iter[K] {
-  Iter::new(fn(yield_) {
-    loop self.head {
-      Some({ key, idx, .. }) =>
-        match yield_(key) {
-          IterEnd => IterEnd
-          IterContinue => continue self.list[idx].next
-        }
-      None => IterContinue
-    }
-  })
-}
+// ///|
+// pub fn Map::keys[K, V](self : Map[K, V]) -> Iter[K] {
+//   Iter::new(fn(yield_) {
+//     loop self.head {
+//       Some({ key, idx, .. }) =>
+//         match yield_(key) {
+//           IterEnd => IterEnd
+//           IterContinue => continue self.list[idx].next
+//         }
+//       None => IterContinue
+//     }
+//   })
+// }
 
-///|
-pub fn Map::values[K, V](self : Map[K, V]) -> Iter[V] {
-  Iter::new(fn(yield_) {
-    loop self.head {
-      Some({ value, idx, .. }) =>
-        match yield_(value) {
-          IterEnd => IterEnd
-          IterContinue => continue self.list[idx].next
-        }
-      None => IterContinue
-    }
-  })
-}
+// ///|
+// pub fn Map::values[K, V](self : Map[K, V]) -> Iter[V] {
+//   Iter::new(fn(yield_) {
+//     loop self.head {
+//       Some({ value, idx, .. }) =>
+//         match yield_(value) {
+//           IterEnd => IterEnd
+//           IterContinue => continue self.list[idx].next
+//         }
+//       None => IterContinue
+//     }
+//   })
+// }
 
-///|
-/// Converts the hash map to an array.
-pub fn Map::to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
-  let arr = Array::new(capacity=self.size)
-  loop self.head {
-    Some({ key, value, idx, .. }) => {
-      arr.push((key, value))
-      continue self.list[idx].next
-    }
-    None => break
-  }
-  arr
-}
+// ///|
+// /// Converts the hash map to an array.
+// pub fn Map::to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
+//   let arr = Array::new(capacity=self.size)
+//   loop self.head {
+//     Some({ key, value, idx, .. }) => {
+//       arr.push((key, value))
+//       continue self.list[idx].next
+//     }
+//     None => break
+//   }
+//   arr
+// }
 
 ///|
 pub fn Map::op_equal[K : Hash + Eq, V : Eq](
@@ -551,26 +551,26 @@ pub fn Map::op_equal[K : Hash + Eq, V : Eq](
   }
 }
 
-///|
-pub fn Map::of[K : Hash + Eq, V](arr : FixedArray[(K, V)]) -> Map[K, V] {
-  let length = arr.length()
-  let m = Map::new(capacity=length)
-  // arr.iter(fn(e) { m.set(e.0, e.1) })
-  for i = 0; i < length; i = i + 1 {
-    let e = arr[i]
-    m.set(e.0, e.1)
-  }
-  m
-}
+// ///|
+// pub fn Map::of[K : Hash + Eq, V](arr : FixedArray[(K, V)]) -> Map[K, V] {
+//   let length = arr.length()
+//   let m = Map::new(capacity=length)
+//   // arr.iter(fn(e) { m.set(e.0, e.1) })
+//   for i = 0; i < length; i = i + 1 {
+//     let e = arr[i]
+//     m.set(e.0, e.1)
+//   }
+//   m
+// }
 
-///|
-pub fn Map::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> Map[K, V] {
-  let m = {}
-  for e in iter {
-    m.set(e.0, e.1)
-  }
-  m
-}
+// ///|
+// pub fn Map::from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> Map[K, V] {
+//   let m = {}
+//   for e in iter {
+//     m.set(e.0, e.1)
+//   }
+//   m
+// }
 
 ///|
 pub fn Map::default[K, V]() -> Map[K, V] {

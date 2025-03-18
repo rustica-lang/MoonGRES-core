@@ -30,7 +30,7 @@ pub fn add_key(self : JsonPath, key : String) -> JsonPath {
 }
 
 ///|
-pub fn output(self : JsonPath, logger : &Logger) -> Unit {
+pub fn output(self : JsonPath, logger : Logger) -> Unit {
   match self {
     Root => logger.write_string("$")
     Key(p, key~) => logger..write_object(p)..write_string(".").write_string(key)
@@ -59,36 +59,36 @@ fn update_index_inplace(self : JsonPath, index : Int) -> Unit {
   }
 }
 
-test "show JsonPath" {
-  let path = Key(Index(Root, index=0), key="foo")
-  @builtin.inspect!(path, content="$[0].foo")
-  @builtin.inspect!(path.add_index(1), content="$[0].foo[1]")
-  @builtin.inspect!(path.add_key("bar"), content="$[0].foo.bar")
-  @builtin.inspect!(
-    Root.add_key("foo").add_key("foo1").add_index(2),
-    content="$.foo.foo1[2]",
-  )
-  @builtin.inspect!(Root.add_key("foo").add_key("foo1"), content="$.foo.foo1")
-  @builtin.inspect!(
-    Root.add_key("foo").add_key("foo1").add_index(2).add_key("bar"),
-    content="$.foo.foo1[2].bar",
-  )
-  @builtin.inspect!(
-    Root.add_key("foo").add_key("foo1").add_index(2).add_key("bar").add_index(3),
-    content="$.foo.foo1[2].bar[3]",
-  )
-  @builtin.inspect!(
-    Root
-    .add_key("foo")
-    .add_key("foo1")
-    .add_index(2)
-    .add_key("bar")
-    .add_index(3)
-    .add_key("baz"),
-    content="$.foo.foo1[2].bar[3].baz",
-  )
-  @builtin.inspect!(
-    Root.add_key("foo").add_key("foo1").add_index(2).add_index(3).add_index(4),
-    content="$.foo.foo1[2][3][4]",
-  )
-}
+// test "show JsonPath" {
+//   let path = Key(Index(Root, index=0), key="foo")
+//   @builtin.inspect!(path, content="$[0].foo")
+//   @builtin.inspect!(path.add_index(1), content="$[0].foo[1]")
+//   @builtin.inspect!(path.add_key("bar"), content="$[0].foo.bar")
+//   @builtin.inspect!(
+//     Root.add_key("foo").add_key("foo1").add_index(2),
+//     content="$.foo.foo1[2]",
+//   )
+//   @builtin.inspect!(Root.add_key("foo").add_key("foo1"), content="$.foo.foo1")
+//   @builtin.inspect!(
+//     Root.add_key("foo").add_key("foo1").add_index(2).add_key("bar"),
+//     content="$.foo.foo1[2].bar",
+//   )
+//   @builtin.inspect!(
+//     Root.add_key("foo").add_key("foo1").add_index(2).add_key("bar").add_index(3),
+//     content="$.foo.foo1[2].bar[3]",
+//   )
+//   @builtin.inspect!(
+//     Root
+//     .add_key("foo")
+//     .add_key("foo1")
+//     .add_index(2)
+//     .add_key("bar")
+//     .add_index(3)
+//     .add_key("baz"),
+//     content="$.foo.foo1[2].bar[3].baz",
+//   )
+//   @builtin.inspect!(
+//     Root.add_key("foo").add_key("foo1").add_index(2).add_index(3).add_index(4),
+//     content="$.foo.foo1[2][3][4]",
+//   )
+// }

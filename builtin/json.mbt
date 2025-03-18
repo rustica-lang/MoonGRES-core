@@ -32,9 +32,9 @@ pub(open) trait ToJson {
 ///|
 pub fn Bool::to_json(self : Bool) -> Json {
   if self {
-    true
+    True
   } else {
-    false
+    False
   }
 }
 
@@ -48,15 +48,15 @@ pub fn Int64::to_json(self : Int64) -> Json {
   String::to_json(self.to_string())
 }
 
-///|
-pub fn UInt::to_json(self : UInt) -> Json {
-  Number(self.to_uint64().to_double())
-}
+// ///|
+// pub fn UInt::to_json(self : UInt) -> Json {
+//   Number(self.to_uint64().to_double())
+// }
 
-///|
-pub fn UInt64::to_json(self : UInt64) -> Json {
-  String::to_json(self.to_string())
-}
+// ///|
+// pub fn UInt64::to_json(self : UInt64) -> Json {
+//   String::to_json(self.to_string())
+// }
 
 ///|
 pub fn Double::to_json(self : Double) -> Json {
@@ -73,131 +73,131 @@ pub fn Float::to_json(self : Float) -> Json {
   Number(self.to_double())
 }
 
-///|
-fn escape_json_string(str : String) -> String {
-  fn to_hex_digit(i : Int) -> Char {
-    if i < 10 {
-      Char::from_int('0'.to_int() + i)
-    } else {
-      Char::from_int('a'.to_int() + (i - 10))
-    }
-  }
+// ///|
+// fn escape_json_string(str : String) -> String {
+//   fn to_hex_digit(i : Int) -> Char {
+//     if i < 10 {
+//       Char::from_int('0'.to_int() + i)
+//     } else {
+//       Char::from_int('a'.to_int() + (i - 10))
+//     }
+//   }
 
-  let len = str.length()
-  let buf = StringBuilder::new(size_hint=len)
-  for i in 0..<len {
-    let c = str[i]
-    match c {
-      '\n' => buf.write_string("\\n")
-      '\r' => buf.write_string("\\r")
-      '\b' => buf.write_string("\\b")
-      '\t' => buf.write_string("\\t")
-      _ => {
-        let code = c.to_int()
-        if code == 0x0C {
-          buf.write_string("\\f")
-        } else if code < 0x20 {
-          buf.write_string("\\u00")
-          buf.write_char(to_hex_digit(code / 16))
-          buf.write_char(to_hex_digit(code % 16))
-        } else {
-          buf.write_char(c)
-        }
-      }
-    }
-  }
-  buf.to_string()
-}
+//   let len = str.length()
+//   let buf = StringBuilder::new(size_hint=len)
+//   for i in 0..<len {
+//     let c = str[i]
+//     match c {
+//       '\n' => buf.write_string("\\n")
+//       '\r' => buf.write_string("\\r")
+//       '\b' => buf.write_string("\\b")
+//       '\t' => buf.write_string("\\t")
+//       _ => {
+//         let code = c.to_int()
+//         if code == 0x0C {
+//           buf.write_string("\\f")
+//         } else if code < 0x20 {
+//           buf.write_string("\\u00")
+//           buf.write_char(to_hex_digit(code / 16))
+//           buf.write_char(to_hex_digit(code % 16))
+//         } else {
+//           buf.write_char(c)
+//         }
+//       }
+//     }
+//   }
+//   buf.to_string()
+// }
 
 ///|
 pub fn String::to_json(self : String) -> Json {
-  String(escape_json_string(self))
+  String(self)
 }
 
-///|
-pub fn Char::to_json(self : Char) -> Json {
-  String(self.to_string())
-}
+// ///|
+// pub fn Char::to_json(self : Char) -> Json {
+//   String(self.to_string())
+// }
 
-///|
-pub fn BigInt::to_json(self : BigInt) -> Json {
-  String(self.to_string())
-}
+// ///|
+// pub fn BigInt::to_json(self : BigInt) -> Json {
+//   String(self.to_string())
+// }
 
 ///|
 pub fn Array::to_json[X : ToJson](self : Array[X]) -> Json {
   Array(self.map(ToJson::to_json))
 }
 
-///|
-pub fn FixedArray::to_json[X : ToJson](self : FixedArray[X]) -> Json {
-  let len = self.length()
-  if len == 0 {
-    return []
-  }
-  let res = Array::make(self.length(), ToJson::to_json(self[0]))
-  for i in 1..<len {
-    res[i] = ToJson::to_json(self[i])
-  }
-  Array(res)
-}
+// ///|
+// pub fn FixedArray::to_json[X : ToJson](self : FixedArray[X]) -> Json {
+//   let len = self.length()
+//   if len == 0 {
+//     return []
+//   }
+//   let res = Array::make(self.length(), ToJson::to_json(self[0]))
+//   for i in 1..<len {
+//     res[i] = ToJson::to_json(self[i])
+//   }
+//   Array(res)
+// }
 
-///|
-pub fn ArrayView::to_json[X : ToJson](self : ArrayView[X]) -> Json {
-  let len = self.length()
-  if len == 0 {
-    return []
-  }
-  let res = Array::make(self.length(), ToJson::to_json(self[0]))
-  for i in 1..<len {
-    res[i] = ToJson::to_json(self[i])
-  }
-  Array(res)
-}
+// ///|
+// pub fn ArrayView::to_json[X : ToJson](self : ArrayView[X]) -> Json {
+//   let len = self.length()
+//   if len == 0 {
+//     return []
+//   }
+//   let res = Array::make(self.length(), ToJson::to_json(self[0]))
+//   for i in 1..<len {
+//     res[i] = ToJson::to_json(self[i])
+//   }
+//   Array(res)
+// }
 
-///|
-pub fn Map::to_json[K : Show, V : ToJson](self : Map[K, V]) -> Json {
-  let object = {}
-  for k, v in self {
-    object[k.to_string()] = v.to_json()
-  }
-  Object(object)
-}
+// ///|
+// pub fn Map::to_json[K : Show, V : ToJson](self : Map[K, V]) -> Json {
+//   let object = {}
+//   for k, v in self {
+//     object[k.to_string()] = v.to_json()
+//   }
+//   Object(object)
+// }
 
-///|
-pub fn Set::to_json[X : ToJson](self : Set[X]) -> Json {
-  let array = []
-  for v in self {
-    array.push(v.to_json())
-  }
-  Array(array)
-}
+// ///|
+// pub fn Set::to_json[X : ToJson](self : Set[X]) -> Json {
+//   let array = []
+//   for v in self {
+//     array.push(v.to_json())
+//   }
+//   Array(array)
+// }
 
-///|
-pub fn Option::to_json[T : ToJson](self : T?) -> Json {
-  match self {
-    None => Null
-    Some(value) => [value.to_json()]
-  }
-}
+// ///|
+// pub fn Option::to_json[T : ToJson](self : T?) -> Json {
+//   match self {
+//     None => Null
+//     Some(value) => [value.to_json()]
+//   }
+// }
 
-///|
-pub fn Result::to_json[Ok : ToJson, Err : ToJson](
-  self : Result[Ok, Err]
-) -> Json {
-  match self {
-    Ok(ok) => { "Ok": ok.to_json() }
-    Err(err) => { "Err": err.to_json() }
-  }
-}
+// ///|
+// pub fn Result::to_json[Ok : ToJson, Err : ToJson](
+//   self : Result[Ok, Err]
+// ) -> Json {
+//   match self {
+//     Ok(ok) => { "Ok": ok.to_json() }
+//     Err(err) => { "Err": err.to_json() }
+//   }
+// }
 
-///|
-//| unit
-pub fn Unit::to_json(_self : Unit) -> Json {
-  Null
-}
+// ///|
+// //| unit
+// pub fn Unit::to_json(_self : Unit) -> Json {
+//   Null
+// }
 
-///|
-pub fn Json::default() -> Json {
-  false
-}
+// ///|
+// pub fn Json::default() -> Json {
+//   false
+// }

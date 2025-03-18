@@ -1,0 +1,32 @@
+{
+  "is-main": true,
+  "link": {
+    "wasm-gc": {
+      "exports": [
+        "get_queries",
+        "on_message_begin",
+        "on_method_complete",
+        "on_url",
+        "on_url_complete",
+        "on_version_complete",
+        "on_header_field",
+        "on_header_field_complete",
+        "on_header_value",
+        "on_header_value_complete",
+        "on_headers_complete",
+        "on_body",
+        "on_message_complete",
+        "on_error",
+        "json_parse_push_string",
+        "json_parse_push_number",
+        "json_parse_push_bool",
+        "json_parse_push_null",
+        "json_parse_object_start",
+        "json_parse_object_field_start",
+        "json_parse_object_end",
+        "json_parse_array_start",
+        "json_parse_array_end"
+      ]
+    }
+  }
+}

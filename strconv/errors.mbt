@@ -22,26 +22,26 @@ pub impl Show for StrConvError with output(self, logger) {
   }
 }
 
-///|
-let range_err_str = "value out of range"
+// ///|
+// let range_err_str = "value out of range"
 
-///|
-let syntax_err_str = "invalid syntax"
+// ///|
+// let syntax_err_str = "invalid syntax"
 
-///|
-let base_err_str = "invalid base"
+// ///|
+// let base_err_str = "invalid base"
 
-///|
-fn range_err[T]() -> T!StrConvError {
-  raise StrConvError(range_err_str)
-}
+// ///|
+// fn range_err[T]() -> T!StrConvError {
+//   raise StrConvError(range_err_str)
+// }
 
-///|
-fn syntax_err[T]() -> T!StrConvError {
-  raise StrConvError(syntax_err_str)
-}
+// ///|
+// fn syntax_err[T]() -> T!StrConvError {
+//   raise StrConvError(syntax_err_str)
+// }
 
-///|
-fn base_err[T]() -> T!StrConvError {
-  raise StrConvError(base_err_str)
-}
+// ///|
+// fn base_err[T]() -> T!StrConvError {
+//   raise StrConvError(base_err_str)
+// }

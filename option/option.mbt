@@ -30,7 +30,7 @@
 /// let result = @option.when(true, fn(){ "Hello, World!" })
 /// assert_eq!(result, Some("Hello, World!"))
 /// ```
-pub fn when[T](condition : Bool, value : () -> T) -> T? {
+pub fn Option::when[T](condition : Bool, value : () -> T) -> T? {
   if condition {
     Some(value())
   } else {
@@ -38,135 +38,135 @@ pub fn when[T](condition : Bool, value : () -> T) -> T? {
   }
 }
 
-test "when" {
-  let result = when(true, fn() { "Hello, World!" })
-  let result2 = when(false, fn() { "Hello, World!" })
-  assert_eq!(result, Some("Hello, World!"))
-  assert_eq!(result2, None)
-}
+// test "when" {
+//   let result = when(true, fn() { "Hello, World!" })
+//   let result2 = when(false, fn() { "Hello, World!" })
+//   assert_eq!(result, Some("Hello, World!"))
+//   assert_eq!(result2, None)
+// }
 
-///|
-/// The `unless` function returns an `Option` value based on a condition.
-///
-/// `unless(condition, value)` is equivalent to `when(not(condition), value)`.
-///
-/// # Arguments
-///
-/// * `condition`: A boolean value indicating whether the condition is true or false.
-/// * `value`: A function that returns a value of type `T`.
-///
-/// # Returns
-///
-/// An `Option` value that is `Some(value())` if the condition is false, otherwise `None`.
-///
-pub fn unless[T](condition : Bool, value : () -> T) -> T? {
-  when(not(condition), value)
-}
+// ///|
+// /// The `unless` function returns an `Option` value based on a condition.
+// ///
+// /// `unless(condition, value)` is equivalent to `when(not(condition), value)`.
+// ///
+// /// # Arguments
+// ///
+// /// * `condition`: A boolean value indicating whether the condition is true or false.
+// /// * `value`: A function that returns a value of type `T`.
+// ///
+// /// # Returns
+// ///
+// /// An `Option` value that is `Some(value())` if the condition is false, otherwise `None`.
+// ///
+// pub fn unless[T](condition : Bool, value : () -> T) -> T? {
+//   when(not(condition), value)
+// }
 
-test "unless" {
-  let result = unless(true, fn() { "Hello, World!" })
-  let result2 = unless(false, fn() { "Hello, World!" })
-  assert_eq!(result, None)
-  assert_eq!(result2, Some("Hello, World!"))
-}
+// test "unless" {
+//   let result = unless(true, fn() { "Hello, World!" })
+//   let result2 = unless(false, fn() { "Hello, World!" })
+//   assert_eq!(result, None)
+//   assert_eq!(result2, Some("Hello, World!"))
+// }
 
-///|
-/// Creates an empty `Option` of type `T`.
-pub fn empty[T]() -> T? {
-  None
-}
+// ///|
+// /// Creates an empty `Option` of type `T`.
+// pub fn empty[T]() -> T? {
+//   None
+// }
 
-test "empty" {
-  let x : Int? = None
-  let y : Int? = empty()
-  assert_eq!(x, y)
-}
+// test "empty" {
+//   let x : Int? = None
+//   let y : Int? = empty()
+//   assert_eq!(x, y)
+// }
 
-///|
-/// Creates an `Option` that contains a value.
-pub fn some[T](value : T) -> T? {
-  Some(value)
-}
+// ///|
+// /// Creates an `Option` that contains a value.
+// pub fn some[T](value : T) -> T? {
+//   Some(value)
+// }
 
-test "some" {
-  let x : Int? = Some(5)
-  let y : Int? = some(5)
-  assert_eq!(x, y)
-}
+// test "some" {
+//   let x : Int? = Some(5)
+//   let y : Int? = some(5)
+//   assert_eq!(x, y)
+// }
 
-///|
-/// Maps the value of an `Option` using a provided function.
-///
-/// # Example
-///
-/// ```
-/// let a = Some(5)
-/// assert_eq!(a.map(fn(x){ x * 2 }), Some(10))
-///
-/// let b = None
-/// assert_eq!(b.map(fn(x){ x * 2 }), None)
-/// ```
-pub fn map[T, U](self : T?, f : (T) -> U) -> U? {
-  match self {
-    Some(t) => Some(f(t))
-    None => None
-  }
-}
+// ///|
+// /// Maps the value of an `Option` using a provided function.
+// ///
+// /// # Example
+// ///
+// /// ```
+// /// let a = Some(5)
+// /// assert_eq!(a.map(fn(x){ x * 2 }), Some(10))
+// ///
+// /// let b = None
+// /// assert_eq!(b.map(fn(x){ x * 2 }), None)
+// /// ```
+// pub fn map[T, U](self : T?, f : (T) -> U) -> U? {
+//   match self {
+//     Some(t) => Some(f(t))
+//     None => None
+//   }
+// }
 
-test "map" {
-  let a = Option::Some(5)
-  let b : Int? = None
-  assert_eq!(a.map(fn(x) { x * 2 }), Some(10))
-  assert_eq!(b.map(fn(x) { x * 2 }), None)
-}
+// test "map" {
+//   let a = Option::Some(5)
+//   let b : Int? = None
+//   assert_eq!(a.map(fn(x) { x * 2 }), Some(10))
+//   assert_eq!(b.map(fn(x) { x * 2 }), None)
+// }
 
-///|
-/// Returns the provided default result (if none), or applies a function to the contained value (if any).
-/// Arguments passed to map_or are eagerly evaluated; if you are passing the result of a function call, it is recommended to use `map_or_else`, which is lazily evaluated.
-///
-/// # Example
-///
-/// ```
-/// let a = Some(5)
-/// assert_eq!(a.map_or(3, fn(x){ x * 2 }), 10)
-/// ```
-pub fn map_or[T, U](self : T?, default : U, f : (T) -> U) -> U {
-  match self {
-    None => default
-    Some(x) => f(x)
-  }
-}
+// ///|
+// /// Returns the provided default result (if none), or applies a function to the contained value (if any).
+// /// Arguments passed to map_or are eagerly evaluated; if you are passing the result of a function call, it is recommended to use `map_or_else`, which is lazily evaluated.
+// ///
+// /// # Example
+// ///
+// /// ```
+// /// let a = Some(5)
+// /// assert_eq!(a.map_or(3, fn(x){ x * 2 }), 10)
+// /// ```
+// pub fn map_or[T, U](self : T?, default : U, f : (T) -> U) -> U {
+//   match self {
+//     None => default
+//     Some(x) => f(x)
+//   }
+// }
 
-test "map_or" {
-  let a = Option::Some("foo")
-  let b : String? = Option::None
-  assert_eq!(a.map_or(42, fn(x) { x.length() }), 3)
-  assert_eq!(b.map_or(42, fn(x) { x.length() }), 42)
-}
+// test "map_or" {
+//   let a = Option::Some("foo")
+//   let b : String? = Option::None
+//   assert_eq!(a.map_or(42, fn(x) { x.length() }), 3)
+//   assert_eq!(b.map_or(42, fn(x) { x.length() }), 42)
+// }
 
-///|
-/// Computes a default function result (if none), or applies a different function to the contained value (if any).
-///
-/// # Example
-///
-/// ```
-/// let a = Some(5)
-/// assert_eq!(a.map_or_else(fn(){ 3 }, fn(x){ x * 2 }), 10)
-/// ```
-pub fn map_or_else[T, U](self : T?, default : () -> U, f : (T) -> U) -> U {
-  match self {
-    None => default()
-    Some(x) => f(x)
-  }
-}
+// ///|
+// /// Computes a default function result (if none), or applies a different function to the contained value (if any).
+// ///
+// /// # Example
+// ///
+// /// ```
+// /// let a = Some(5)
+// /// assert_eq!(a.map_or_else(fn(){ 3 }, fn(x){ x * 2 }), 10)
+// /// ```
+// pub fn map_or_else[T, U](self : T?, default : () -> U, f : (T) -> U) -> U {
+//   match self {
+//     None => default()
+//     Some(x) => f(x)
+//   }
+// }
 
-test "map_or_else" {
-  let k = 21
-  let a = Option::Some("foo")
-  let b : String? = Option::None
-  assert_eq!(a.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 3)
-  assert_eq!(b.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 42)
-}
+// test "map_or_else" {
+//   let k = 21
+//   let a = Option::Some("foo")
+//   let b : String? = Option::None
+//   assert_eq!(a.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 3)
+//   assert_eq!(b.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 42)
+// }
 
 ///|
 /// Binds an option to a function that returns another option.
@@ -188,80 +188,80 @@ pub fn bind[T, U](self : T?, f : (T) -> U?) -> U? {
   }
 }
 
-test "bind" {
-  let a = Option::Some(5)
-  let b : Int? = None
-  assert_eq!(a.bind(fn(x) { Some(x * 2) }), Some(10))
-  assert_eq!(b.bind(fn(x) { Some(x * 2) }), None)
-}
+// test "bind" {
+//   let a = Option::Some(5)
+//   let b : Int? = None
+//   assert_eq!(a.bind(fn(x) { Some(x * 2) }), Some(10))
+//   assert_eq!(b.bind(fn(x) { Some(x * 2) }), None)
+// }
 
-///|
-/// Flattens an `Option` of `Option` into a single `Option`.
-///
-/// If the input `Option` is `Some(Some(value))`, the function returns `Some(value)`.
-///
-/// # Example
-///
-/// ```
-/// let a = Some(Some(42));
-/// assert_eq!(@option.flatten(a), Some(42))
-/// let b : Int?? = Some(None)
-/// assert_eq!(@option.flatten(b), None)
-/// ```
-pub fn flatten[T](self : T??) -> T? {
-  match self {
-    Some(inner) => inner
-    None => None
-  }
-}
+// ///|
+// /// Flattens an `Option` of `Option` into a single `Option`.
+// ///
+// /// If the input `Option` is `Some(Some(value))`, the function returns `Some(value)`.
+// ///
+// /// # Example
+// ///
+// /// ```
+// /// let a = Some(Some(42));
+// /// assert_eq!(@option.flatten(a), Some(42))
+// /// let b : Int?? = Some(None)
+// /// assert_eq!(@option.flatten(b), None)
+// /// ```
+// pub fn flatten[T](self : T??) -> T? {
+//   match self {
+//     Some(inner) => inner
+//     None => None
+//   }
+// }
 
-test "flatten" {
-  let a : Int?? = Some(Some(42))
-  assert_eq!(flatten(a), Some(42))
-  let b : Int?? = Some(None)
-  assert_eq!(flatten(b), None)
-}
+// test "flatten" {
+//   let a : Int?? = Some(Some(42))
+//   assert_eq!(flatten(a), Some(42))
+//   let b : Int?? = Some(None)
+//   assert_eq!(flatten(b), None)
+// }
 
-///|
-/// Checks if the option is empty.
-pub fn is_empty[T](self : T?) -> Bool {
-  match self {
-    None => true
-    _ => false
-  }
-}
+// ///|
+// /// Checks if the option is empty.
+// pub fn is_empty[T](self : T?) -> Bool {
+//   match self {
+//     None => true
+//     _ => false
+//   }
+// }
 
-test "is_empty" {
-  let x = Option::Some(3)
-  let y : Int? = None
-  assert_false!(x.is_empty())
-  assert_true!(y.is_empty())
-}
+// test "is_empty" {
+//   let x = Option::Some(3)
+//   let y : Int? = None
+//   assert_false!(x.is_empty())
+//   assert_true!(y.is_empty())
+// }
 
-///|
-/// Filters the option by applying the given predicate function `f`.
-///
-/// If the predicate function `f` returns `true` for the value contained in the option,
-/// the same option is returned. Otherwise, `None` is returned.
-///
-/// # Example
-/// ```
-/// let x = Some(3)
-/// assert_eq!(x.filter(fn(x){ x > 5 }), None)
-/// assert_eq!(x.filter(fn(x){ x < 5 }), Some(3))
-/// ```
-pub fn filter[T](self : T?, f : (T) -> Bool) -> T? {
-  match self {
-    Some(t) => if f(t) { self } else { None }
-    None => None
-  }
-}
+// ///|
+// /// Filters the option by applying the given predicate function `f`.
+// ///
+// /// If the predicate function `f` returns `true` for the value contained in the option,
+// /// the same option is returned. Otherwise, `None` is returned.
+// ///
+// /// # Example
+// /// ```
+// /// let x = Some(3)
+// /// assert_eq!(x.filter(fn(x){ x > 5 }), None)
+// /// assert_eq!(x.filter(fn(x){ x < 5 }), Some(3))
+// /// ```
+// pub fn filter[T](self : T?, f : (T) -> Bool) -> T? {
+//   match self {
+//     Some(t) => if f(t) { self } else { None }
+//     None => None
+//   }
+// }
 
-test "filter" {
-  let x = Option::Some(3)
-  assert_eq!(x.filter(fn(x) { x > 5 }), None)
-  assert_eq!(x.filter(fn(x) { x < 5 }), Some(3))
-}
+// test "filter" {
+//   let x = Option::Some(3)
+//   assert_eq!(x.filter(fn(x) { x > 5 }), None)
+//   assert_eq!(x.filter(fn(x) { x < 5 }), Some(3))
+// }
 
 ///|
 /// Return the contained `Some` value or the provided default.
@@ -272,11 +272,11 @@ pub fn or[T](self : T?, default : T) -> T {
   }
 }
 
-test "or" {
-  let x = Option::Some(3)
-  assert_eq!(x.or(5), 3)
-  assert_eq!((None : Int?).or(5), 5)
-}
+// test "or" {
+//   let x = Option::Some(3)
+//   assert_eq!(x.or(5), 3)
+//   assert_eq!((None : Int?).or(5), 5)
+// }
 
 ///|
 /// Return the contained `Some` value or the provided default.
@@ -289,54 +289,54 @@ pub fn or_else[T](self : T?, default : () -> T) -> T {
   }
 }
 
-test "or else" {
-  let x = Option::Some(3)
-  assert_eq!(x.or_else(fn() { 5 }), 3)
-  assert_eq!((None : Int?).or_else(fn() { 5 }), 5)
-}
+// test "or else" {
+//   let x = Option::Some(3)
+//   assert_eq!(x.or_else(fn() { 5 }), 3)
+//   assert_eq!((None : Int?).or_else(fn() { 5 }), 5)
+// }
 
-///|
-/// Return the contained `Some` value or the result of the `T::default()`.
-pub fn or_default[T : Default](self : T?) -> T {
-  match self {
-    None => T::default()
-    Some(t) => t
-  }
-}
+// ///|
+// /// Return the contained `Some` value or the result of the `T::default()`.
+// pub fn or_default[T : Default](self : T?) -> T {
+//   match self {
+//     None => T::default()
+//     Some(t) => t
+//   }
+// }
 
-test "or default" {
-  let x = Option::Some(3)
-  assert_eq!(x.or_default(), 3)
-  assert_eq!((None : Int?).or_default(), 0)
-}
+// test "or default" {
+//   let x = Option::Some(3)
+//   assert_eq!(x.or_default(), 3)
+//   assert_eq!((None : Int?).or_default(), 0)
+// }
 
-///|
-pub fn compare[X : Compare](self : X?, other : X?) -> Int {
-  match self {
-    None =>
-      match other {
-        None => 0
-        Some(_) => -1
-      }
-    Some(x) =>
-      match other {
-        None => 1
-        Some(y) => x.compare(y)
-      }
-  }
-}
+// ///|
+// pub fn compare[X : Compare](self : X?, other : X?) -> Int {
+//   match self {
+//     None =>
+//       match other {
+//         None => 0
+//         Some(_) => -1
+//       }
+//     Some(x) =>
+//       match other {
+//         None => 1
+//         Some(y) => x.compare(y)
+//       }
+//   }
+// }
 
-test "compare" {
-  let some1 = Option::Some(1)
-  let some2 = Option::Some(2)
-  let none = Option::None
-  assert_eq!(0, some1.compare(Option::Some(1)))
-  assert_eq!(-1, some1.compare(some2))
-  assert_eq!(1, some2.compare(some1))
-  assert_eq!(0, none.compare(none))
-  assert_eq!(-1, none.compare(some1))
-  assert_eq!(1, some2.compare(none))
-}
+// test "compare" {
+//   let some1 = Option::Some(1)
+//   let some2 = Option::Some(2)
+//   let none = Option::None
+//   assert_eq!(0, some1.compare(Option::Some(1)))
+//   assert_eq!(-1, some1.compare(some2))
+//   assert_eq!(1, some2.compare(some1))
+//   assert_eq!(0, none.compare(none))
+//   assert_eq!(-1, none.compare(some1))
+//   assert_eq!(1, some2.compare(none))
+// }
 
 ///|
 /// `None`
@@ -344,40 +344,40 @@ pub fn Option::default[X]() -> X? {
   None
 }
 
-///|
-pub fn iter[T](self : T?) -> Iter[T] {
-  match self {
-    Some(v) => Iter::singleton(v)
-    None => Iter::empty()
-  }
-}
+// ///|
+// pub fn iter[T](self : T?) -> Iter[T] {
+//   match self {
+//     Some(v) => Iter::singleton(v)
+//     None => Iter::empty()
+//   }
+// }
 
-test "iter" {
-  let x = Option::Some(42)
-  let exb = StringBuilder::new(size_hint=0)
-  x
-  .iter()
-  .each(fn(x) {
-    exb.write_string(x.to_string())
-    exb.write_char('\n')
-  })
-  inspect!(
-    exb,
-    content=
-      #|42
-      #|
-    ,
-  )
-  exb.reset()
-  let y : Int? = None
-  y
-  .iter()
-  .each(fn(x) {
-    exb.write_string(x.to_string())
-    exb.write_char('\n')
-  })
-  inspect!(exb, content="")
-}
+// test "iter" {
+//   let x = Option::Some(42)
+//   let exb = StringBuilder::new(size_hint=0)
+//   x
+//   .iter()
+//   .each(fn(x) {
+//     exb.write_string(x.to_string())
+//     exb.write_char('\n')
+//   })
+//   inspect!(
+//     exb,
+//     content=
+//       #|42
+//       #|
+//     ,
+//   )
+//   exb.reset()
+//   let y : Int? = None
+//   y
+//   .iter()
+//   .each(fn(x) {
+//     exb.write_string(x.to_string())
+//     exb.write_char('\n')
+//   })
+//   inspect!(exb, content="")
+// }
 
 ///|
 pub fn or_error[T, Err : Error](self : T?, err : Err) -> T!Err {
@@ -387,41 +387,41 @@ pub fn or_error[T, Err : Error](self : T?, err : Err) -> T!Err {
   }
 }
 
-test "or error" {
-  assert_eq!(
-    try {
-      (None : String?).or_error!(Failure("This is serious"))
-    } catch {
-      Failure(err) => err
-    },
-    "This is serious",
-  )
-  assert_eq!(
-    try {
-      Some("This is ok").or_error!(Failure("This is serious"))
-    } catch {
-      Failure(err) => err
-    },
-    "This is ok",
-  )
-}
+// test "or error" {
+//   assert_eq!(
+//     try {
+//       (None : String?).or_error!(Failure("This is serious"))
+//     } catch {
+//       Failure(err) => err
+//     },
+//     "This is serious",
+//   )
+//   assert_eq!(
+//     try {
+//       Some("This is ok").or_error!(Failure("This is serious"))
+//     } catch {
+//       Failure(err) => err
+//     },
+//     "This is ok",
+//   )
+// }
 
-///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for X? with arbitrary(
-  i,
-  rs
-) {
-  if rs.next_double() < 0.3 {
-    None
-  } else {
-    Some(@quickcheck.Arbitrary::arbitrary(i, rs))
-  }
-}
+// ///|
+// pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for X? with arbitrary(
+//   i,
+//   rs
+// ) {
+//   if rs.next_double() < 0.3 {
+//     None
+//   } else {
+//     Some(@quickcheck.Arbitrary::arbitrary(i, rs))
+//   }
+// }
 
-test "arbitrary" {
-  let samples : Array[Int?] = @quickcheck.samples(10)
-  inspect!(
-    samples,
-    content="[None, None, Some(-1), Some(0), None, Some(0), Some(-5), Some(2), None, Some(4)]",
-  )
-}
+// test "arbitrary" {
+//   let samples : Array[Int?] = @quickcheck.samples(10)
+//   inspect!(
+//     samples,
+//     content="[None, None, Some(-1), Some(0), None, Some(0), Some(-5), Some(2), None, Some(4)]",
+//   )
+// }

@@ -1,0 +1,1 @@
+../../json/from_json.mbt
