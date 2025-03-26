@@ -1,15 +1,10 @@
 ///|
-trait ToStr {
-  to_string(Self) -> String
-}
-
-///|
 trait Obj {
   typname() -> String
 }
 
 ///|
-fn output_with_typname[T : ToStr + Obj](val : T, logger : Logger) -> Unit {
+fn output_with_typname[T : Show + Obj](val : T, logger : &Logger) -> Unit {
   logger.write_string(T::typname())
   logger.write_char('<')
   logger.write_string(val.to_string())

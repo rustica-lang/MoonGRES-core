@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ///|
-// const GPRIME1 : UInt = 0x9E3779B1
+///|
+const GPRIME1 : UInt = 0x9E3779B1
 
 ///|
 const GPRIMES2 : UInt = 0x85EBCA77
@@ -167,55 +167,55 @@ pub fn Hasher::combine_int(self : Hasher, value : Int) -> Unit {
   self.combine_uint(value.reinterpret_as_uint())
 }
 
-// ///|
-// /// Combines a 64-bit integer value into the hash state by splitting it into two
-// /// 32-bit parts and processing them separately. This method is used internally
-// /// by the hash implementation to incorporate 64-bit integers into the hash
-// /// computation.
-// ///
-// /// Parameters:
-// ///
-// /// * `hasher` : The hasher object whose internal state will be updated.
-// /// * `value` : The 64-bit integer value to be incorporated into the hash state.
-// ///
-// /// Example:
-// ///
-// /// ```moonbit
-// /// test "Hasher::combine_int64" {
-// ///   let hasher = Hasher::new()
-// ///   hasher.combine_int64(42L)
-// ///   inspect!(hasher.finalize(), content="-1962516083")
-// /// }
-// /// ```
-// pub fn Hasher::combine_int64(self : Hasher, value : Int64) -> Unit {
-//   self.acc += 8
-//   self.consume4(value.reinterpret_as_uint64().to_uint())
-//   self.consume4((value.reinterpret_as_uint64() >> 32).to_uint())
-// }
+///|
+/// Combines a 64-bit integer value into the hash state by splitting it into two
+/// 32-bit parts and processing them separately. This method is used internally
+/// by the hash implementation to incorporate 64-bit integers into the hash
+/// computation.
+///
+/// Parameters:
+///
+/// * `hasher` : The hasher object whose internal state will be updated.
+/// * `value` : The 64-bit integer value to be incorporated into the hash state.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Hasher::combine_int64" {
+///   let hasher = Hasher::new()
+///   hasher.combine_int64(42L)
+///   inspect!(hasher.finalize(), content="-1962516083")
+/// }
+/// ```
+pub fn Hasher::combine_int64(self : Hasher, value : Int64) -> Unit {
+  self.acc += 8
+  self.consume4(value.reinterpret_as_uint64().to_uint())
+  self.consume4((value.reinterpret_as_uint64() >> 32).to_uint())
+}
 
-// ///|
-// /// Combines an unsigned 32-bit integer into the hasher's internal state by
-// /// reinterpreting it as a signed integer and incorporating it into the hash
-// /// computation.
-// ///
-// /// Parameters:
-// ///
-// /// * `hasher` : The hasher object to update.
-// /// * `value` : The unsigned 32-bit integer value to be combined into the hash.
-// ///
-// /// Example:
-// ///
-// /// ```moonbit
-// /// test "Hasher::combine_uint" {
-// ///   let hasher = Hasher::new()
-// ///   hasher.combine_uint(42U)
-// ///   inspect!(hasher.finalize(), content="1161967057")
-// /// }
-// /// ```
-// pub fn Hasher::combine_uint(self : Hasher, value : UInt) -> Unit {
-//   self.acc += 4
-//   self.consume4(value)
-// }
+///|
+/// Combines an unsigned 32-bit integer into the hasher's internal state by
+/// reinterpreting it as a signed integer and incorporating it into the hash
+/// computation.
+///
+/// Parameters:
+///
+/// * `hasher` : The hasher object to update.
+/// * `value` : The unsigned 32-bit integer value to be combined into the hash.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Hasher::combine_uint" {
+///   let hasher = Hasher::new()
+///   hasher.combine_uint(42U)
+///   inspect!(hasher.finalize(), content="1161967057")
+/// }
+/// ```
+pub fn Hasher::combine_uint(self : Hasher, value : UInt) -> Unit {
+  self.acc += 4
+  self.consume4(value)
+}
 
 // ///|
 // /// Combines a 64-bit unsigned integer into the hasher's internal state. Useful
@@ -264,29 +264,29 @@ pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
   self.combine_int64(value.reinterpret_as_int64())
 }
 
-///|
-/// Combines a 32-bit floating-point value into the hasher by reinterpreting its
-/// bit pattern as a 32-bit integer. The operation maintains the same hash result
-/// regardless of the floating-point value's representation.
-///
-/// Parameters:
-///
-/// * `hasher` : The hasher object that maintains the internal state of the
-/// hashing operation.
-/// * `value` : The 32-bit floating-point value to be combined into the hash.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Hasher::combine_float" {
-///   let hasher = Hasher::new()
-///   hasher.combine_float(3.14)
-///   inspect!(hasher.finalize(), content="635116317") // Hash of the bits of 3.14
-/// }
-/// ```
-pub fn Hasher::combine_float(self : Hasher, value : Float) -> Unit {
-  self.combine_uint(value.reinterpret_as_uint())
-}
+// ///|
+// /// Combines a 32-bit floating-point value into the hasher by reinterpreting its
+// /// bit pattern as a 32-bit integer. The operation maintains the same hash result
+// /// regardless of the floating-point value's representation.
+// ///
+// /// Parameters:
+// ///
+// /// * `hasher` : The hasher object that maintains the internal state of the
+// /// hashing operation.
+// /// * `value` : The 32-bit floating-point value to be combined into the hash.
+// ///
+// /// Example:
+// ///
+// /// ```moonbit
+// /// test "Hasher::combine_float" {
+// ///   let hasher = Hasher::new()
+// ///   hasher.combine_float(3.14)
+// ///   inspect!(hasher.finalize(), content="635116317") // Hash of the bits of 3.14
+// /// }
+// /// ```
+// pub fn Hasher::combine_float(self : Hasher, value : Float) -> Unit {
+//   self.combine_uint(value.reinterpret_as_uint())
+// }
 
 ///|
 /// Combines a byte value into the hash state.
@@ -309,39 +309,39 @@ pub fn Hasher::combine_byte(self : Hasher, value : Byte) -> Unit {
   self.consume1(value)
 }
 
-///|
-/// Combines a byte sequence into the hasher's internal state using xxHash32
-/// algorithm. Processes the input bytes in chunks of 4 bytes for efficiency,
-/// with remaining bytes processed individually.
-///
-/// Parameters:
-///
-/// * `hasher` : The hasher object to update with the byte sequence.
-/// * `bytes` : The byte sequence to be combined into the hash.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Hasher::combine_bytes" {
-///   let hasher = Hasher::new()
-///   hasher.combine_bytes(b"\xFF\x00\xFF\x00")
-///   inspect!(hasher.finalize(), content="-686861102")
-/// }
-/// ```
-pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
-  let mut remain = value.length()
-  let mut cur = 0
-  while remain >= 4 {
-    self.consume4(endian32(value, cur))
-    cur += 4
-    remain -= 4
-  }
-  while remain >= 1 {
-    self.consume1(value[cur])
-    cur += 1
-    remain -= 1
-  }
-}
+// ///|
+// /// Combines a byte sequence into the hasher's internal state using xxHash32
+// /// algorithm. Processes the input bytes in chunks of 4 bytes for efficiency,
+// /// with remaining bytes processed individually.
+// ///
+// /// Parameters:
+// ///
+// /// * `hasher` : The hasher object to update with the byte sequence.
+// /// * `bytes` : The byte sequence to be combined into the hash.
+// ///
+// /// Example:
+// ///
+// /// ```moonbit
+// /// test "Hasher::combine_bytes" {
+// ///   let hasher = Hasher::new()
+// ///   hasher.combine_bytes(b"\xFF\x00\xFF\x00")
+// ///   inspect!(hasher.finalize(), content="-686861102")
+// /// }
+// /// ```
+// pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
+//   let mut remain = value.length()
+//   let mut cur = 0
+//   while remain >= 4 {
+//     self.consume4(endian32(value, cur))
+//     cur += 4
+//     remain -= 4
+//   }
+//   while remain >= 1 {
+//     self.consume1(value[cur])
+//     cur += 1
+//     remain -= 1
+//   }
+// }
 
 ///|
 /// Combines a string value into the current hash state by processing each
@@ -429,10 +429,10 @@ fn Hasher::consume4(self : Hasher, input : UInt) -> Unit {
   self.acc = rotl(self.acc + input * GPRIME3, 17) * GPRIME4
 }
 
-// ///|
-// fn Hasher::consume1(self : Hasher, input : Byte) -> Unit {
-//   self.acc = rotl(self.acc + input.to_uint() * GPRIME5, 11) * GPRIME1
-// }
+///|
+fn Hasher::consume1(self : Hasher, input : Byte) -> Unit {
+  self.acc = rotl(self.acc + input.to_uint() * GPRIME5, 11) * GPRIME1
+}
 
 ///|
 fn rotl(x : UInt, r : Int) -> UInt {

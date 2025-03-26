@@ -219,21 +219,21 @@ pub fn not(x : Bool) -> Bool = "%bool_not"
 // /// }
 // /// ```
 // pub impl Compare for Bool with compare(self, other) = "%bool_compare"
-//
-// ///|
-// /// Returns the default value for the `Bool` type, which is `false`.
-// ///
-// /// Returns a `Bool` value that represents the default state of a boolean value.
-// ///
-// /// Example:
-// ///
-// /// ```moonbit
-// /// test "Bool::default" {
-// ///   let b : Bool = Bool::default()
-// ///   inspect!(b, content="false")
-// /// }
-// /// ```
-// pub impl Default for Bool with default() = "%bool_default"
+
+///|
+/// Returns the default value for the `Bool` type, which is `false`.
+///
+/// Returns a `Bool` value that represents the default state of a boolean value.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Bool::default" {
+///   let b : Bool = Bool::default()
+///   inspect!(b, content="false")
+/// }
+/// ```
+pub impl Default for Bool with default() = "%bool_default"
 
 // // int32 primitive ops
 
@@ -747,32 +747,32 @@ pub fn Int::op_div(self : Int, other : Int) -> Int = "%i32_div"
 /// ```
 pub impl Eq for Int with op_equal(self : Int, other : Int) -> Bool = "%i32_eq"
 
-// ///|
-// /// Compares two integers and returns their relative order.
-// ///
-// /// Parameters:
-// ///
-// /// * `self` : The first integer to compare.
-// /// * `other` : The second integer to compare against.
-// ///
-// /// Returns an integer indicating the relative order:
-// ///
-// /// * A negative value if `self` is less than `other`
-// /// * Zero if `self` equals `other`
-// /// * A positive value if `self` is greater than `other`
-// ///
-// /// Example:
-// ///
-// /// ```moonbit
-// /// test "Int::compare" {
-// ///   let a = 42
-// ///   let b = 24
-// ///   inspect!(a.compare(b), content="1") // 42 > 24
-// ///   inspect!(b.compare(a), content="-1") // 24 < 42
-// ///   inspect!(a.compare(a), content="0") // 42 = 42
-// /// }
-// /// ```
-// pub impl Compare for Int with compare(self, other) = "%i32_compare"
+///|
+/// Compares two integers and returns their relative order.
+///
+/// Parameters:
+///
+/// * `self` : The first integer to compare.
+/// * `other` : The second integer to compare against.
+///
+/// Returns an integer indicating the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Int::compare" {
+///   let a = 42
+///   let b = 24
+///   inspect!(a.compare(b), content="1") // 42 > 24
+///   inspect!(b.compare(a), content="-1") // 24 < 42
+///   inspect!(a.compare(a), content="0") // 42 = 42
+/// }
+/// ```
+pub impl Compare for Int with compare(self, other) = "%i32_compare"
 
 // ///|
 // pub fn Int::is_pos(self : Int) -> Bool = "%i32_is_pos"
@@ -1231,30 +1231,30 @@ pub impl Eq for Double with op_equal(self : Double, other : Double) -> Bool = "%
 /// ```
 pub fn Char::to_int(self : Char) -> Int = "%char_to_int"
 
-// ///|
-// /// Converts a Unicode character to its unsigned 32-bit integer code point
-// /// representation. The character's code point value is first converted to a
-// /// signed integer and then reinterpreted as an unsigned integer.
-// ///
-// /// Parameters:
-// ///
-// /// * `character` : The Unicode character to be converted.
-// ///
-// /// Returns an unsigned 32-bit integer representing the character's Unicode code
-// /// point.
-// ///
-// /// Example:
-// ///
-// /// ```moonbit
-// /// test "Char::to_uint" {
-// ///   let c = 'A'
-// ///   inspect!(c.to_uint(), content="65") // ASCII value of 'A'
-// ///   let emoji = '🤣'
-// ///   inspect!(emoji.to_uint(), content="129315") // Unicode code point U+1F923
-// /// }
-// /// ```
-// pub fn Char::to_uint(self : Char) -> UInt {
-//   self.to_int().reinterpret_as_uint()
+///|
+/// Converts a Unicode character to its unsigned 32-bit integer code point
+/// representation. The character's code point value is first converted to a
+/// signed integer and then reinterpreted as an unsigned integer.
+///
+/// Parameters:
+///
+/// * `character` : The Unicode character to be converted.
+///
+/// Returns an unsigned 32-bit integer representing the character's Unicode code
+/// point.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Char::to_uint" {
+///   let c = 'A'
+///   inspect!(c.to_uint(), content="65") // ASCII value of 'A'
+///   let emoji = '🤣'
+///   inspect!(emoji.to_uint(), content="129315") // Unicode code point U+1F923
+/// }
+/// ```
+pub fn Char::to_uint(self : Char) -> UInt {
+  self.to_int().reinterpret_as_uint()
 }
 
 ///|
@@ -1359,38 +1359,38 @@ pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
 /// ```
 pub fn Bytes::op_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 
-// ///|
-// /// Retrieves a byte at the specified index from a byte sequence without
-// /// performing bounds checking. This is a low-level operation that should be used
-// /// with caution.
-// ///
-// /// Parameters:
-// ///
-// /// * `bytes` : The byte sequence to retrieve the byte from.
-// /// * `index` : The position in the byte sequence from which to retrieve the
-// /// byte.
-// ///
-// /// Returns a single byte from the specified position in the byte sequence.
-// ///
-// /// Throws a panic if the index is negative or greater than or equal to the
-// /// length of the byte sequence.
-// ///
-// /// Example:
-// ///
-// /// ```moonbit
-// /// test "Bytes::unsafe_get" {
-// ///   let bytes = b"\x01\x02\x03"
-// ///   inspect!(bytes.unsafe_get(1), content="b'\\x02'")
-// /// }
-// ///
-// /// test "panic Bytes::unsafe_get/out_of_bounds" {
-// ///   let bytes = b"\x01\x02\x03"
-// ///   ignore(bytes.unsafe_get(3)) // Index out of bounds
-// /// }
-// /// ```
-// ///
-// /// @alert unsafe "Panic if index is out of bounds"
-// pub fn Bytes::unsafe_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
+///|
+/// Retrieves a byte at the specified index from a byte sequence without
+/// performing bounds checking. This is a low-level operation that should be used
+/// with caution.
+///
+/// Parameters:
+///
+/// * `bytes` : The byte sequence to retrieve the byte from.
+/// * `index` : The position in the byte sequence from which to retrieve the
+/// byte.
+///
+/// Returns a single byte from the specified position in the byte sequence.
+///
+/// Throws a panic if the index is negative or greater than or equal to the
+/// length of the byte sequence.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Bytes::unsafe_get" {
+///   let bytes = b"\x01\x02\x03"
+///   inspect!(bytes.unsafe_get(1), content="b'\\x02'")
+/// }
+///
+/// test "panic Bytes::unsafe_get/out_of_bounds" {
+///   let bytes = b"\x01\x02\x03"
+///   ignore(bytes.unsafe_get(3)) // Index out of bounds
+/// }
+/// ```
+///
+/// @alert unsafe "Panic if index is out of bounds"
+pub fn Bytes::unsafe_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 
 ///|
 /// Returns the number of bytes in a byte sequence.
@@ -1413,38 +1413,38 @@ pub fn Bytes::op_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 /// ```
 pub fn Bytes::length(self : Bytes) -> Int = "%bytes_length"
 
-// ///|
-// /// Creates a new byte sequence of the specified length, where each byte is
-// /// initialized to the given value.
-// ///
-// /// Parameters:
-// ///
-// /// * `length` : The length of the byte sequence to create. Must be non-negative.
-// /// * `initial_value` : The byte value used to initialize each position in the
-// /// sequence.
-// ///
-// /// Returns a new byte sequence of the specified length with all positions
-// /// initialized to the given value.
-// ///
-// /// Throws a panic if `length` is negative.
-// ///
-// /// Example:
-// ///
-// /// ```moonbit
-// /// test "Bytes::make" {
-// ///   let bytes = Bytes::make(3, b'\xFF')
-// ///   inspect!(bytes, content=
-// ///   #|b"\xff\xff\xff"
-// /// )
-// ///   let empty = Bytes::make(0, b'\x00')
-// ///   inspect!(empty, content="b\"\"")
-// /// }
-// ///
-// /// test "panic Bytes::make/negative_length" {
-// ///   ignore(Bytes::make(-1, b'\x00')) // Panics: negative length
-// /// }
-// /// ```
-// pub fn Bytes::make(len : Int, init : Byte) -> Bytes = "%bytes_make"
+///|
+/// Creates a new byte sequence of the specified length, where each byte is
+/// initialized to the given value.
+///
+/// Parameters:
+///
+/// * `length` : The length of the byte sequence to create. Must be non-negative.
+/// * `initial_value` : The byte value used to initialize each position in the
+/// sequence.
+///
+/// Returns a new byte sequence of the specified length with all positions
+/// initialized to the given value.
+///
+/// Throws a panic if `length` is negative.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Bytes::make" {
+///   let bytes = Bytes::make(3, b'\xFF')
+///   inspect!(bytes, content=
+///   #|b"\xff\xff\xff"
+/// )
+///   let empty = Bytes::make(0, b'\x00')
+///   inspect!(empty, content="b\"\"")
+/// }
+///
+/// test "panic Bytes::make/negative_length" {
+///   ignore(Bytes::make(-1, b'\x00')) // Panics: negative length
+/// }
+/// ```
+pub fn Bytes::make(len : Int, init : Byte) -> Bytes = "%bytes_make"
 //
 // ///|
 // /// Creates a new byte sequence filled with zero bytes.
@@ -1472,7 +1472,7 @@ pub fn Bytes::length(self : Bytes) -> Int = "%bytes_length"
 // /// ```
 // pub fn Bytes::new(len : Int) -> Bytes {
 //   Bytes::make(len, b'\x00')
-}
+// }
 
 ///|
 /// Converts a 32-bit signed integer to a byte by taking its least significant 8
@@ -1517,7 +1517,7 @@ pub fn Int::to_byte(self : Int) -> Byte = "%i32_to_byte"
 // /// ```
 // pub fn UInt64::to_byte(self : UInt64) -> Byte {
 //   self.to_int().to_byte()
-}
+// }
 
 // FixedArray primitive ops
 
@@ -2903,30 +2903,30 @@ pub fn Float::to_double(self : Float) -> Double = "%f32.to_f64"
 // /// }
 // /// ```
 // pub fn Float::reinterpret_as_int(self : Float) -> Int = "%f32.to_i32_reinterpret"
-//
-// ///|
-// /// Reinterprets the bits of a 32-bit floating-point number as an unsigned 32-bit
-// /// integer without performing any numeric conversion. Preserves the exact bit
-// /// pattern of the input value, only changing how these bits are interpreted.
-// ///
-// /// Parameters:
-// ///
-// /// * `float` : The 32-bit floating-point number whose bits are to be
-// /// reinterpreted.
-// ///
-// /// Returns an unsigned 32-bit integer (`UInt`) that has the same bit pattern as
-// /// the input floating-point number.
-// ///
-// /// Example:
-// ///
-// /// ```moonbit
-// /// test "Float::reinterpret_as_uint" {
-// ///   let x : Float = 1.0
-// ///   inspect!(x.reinterpret_as_uint(), content="1065353216") // Decimal representation of 0x3F800000
-// /// }
-// /// ```
-// pub fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpret"
-//
+
+///|
+/// Reinterprets the bits of a 32-bit floating-point number as an unsigned 32-bit
+/// integer without performing any numeric conversion. Preserves the exact bit
+/// pattern of the input value, only changing how these bits are interpreted.
+///
+/// Parameters:
+///
+/// * `float` : The 32-bit floating-point number whose bits are to be
+/// reinterpreted.
+///
+/// Returns an unsigned 32-bit integer (`UInt`) that has the same bit pattern as
+/// the input floating-point number.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Float::reinterpret_as_uint" {
+///   let x : Float = 1.0
+///   inspect!(x.reinterpret_as_uint(), content="1065353216") // Decimal representation of 0x3F800000
+/// }
+/// ```
+pub fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpret"
+
 // ///|
 // /// Converts an integer to a 32-bit floating-point number. The conversion is
 // /// exact for small integers, but may lose precision for large integers due to

@@ -7,7 +7,7 @@ struct InsertUserArgs {
   last_login : Timestamp
   account_balance : Int64
   profile : Jsonb
-  avatar : Bytea
+  avatar : Bytes
   subscription_duration : Interval
   birthdate : Date
   preferred_time : Time
@@ -26,7 +26,7 @@ struct User {
   last_login : Timestamp
   account_balance : Int64
   profile : Jsonb
-  avatar : Bytea
+  avatar : Bytes
   subscription_duration : Interval
   birthdate : Date
   preferred_time : Time

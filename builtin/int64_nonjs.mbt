@@ -893,32 +893,32 @@ pub fn Int64::reinterpret_as_double(self : Int64) -> Double = "%i64_to_f64_reint
 // /// @alert deprecated "Use `reinterpret_as_int64` instead"
 // /// @coverage.skip
 // pub fn Double::reinterpret_as_i64(self : Double) -> Int64 = "%f64_to_i64_reinterpret"
-//
-// ///|
-// /// Reinterprets the bits of a double-precision floating-point number as a 64-bit
-// /// signed integer without performing any conversion. Preserves the exact bit
-// /// pattern of the input value.
-// ///
-// /// Parameters:
-// ///
-// /// * `number` : The double-precision floating-point number whose bits will be
-// /// reinterpreted.
-// ///
-// /// Returns a 64-bit signed integer containing the same bit pattern as the input
-// /// floating-point number.
-// ///
-// /// Example:
-// ///
-// /// ```moonbit
-// /// test "Double::reinterpret_as_int64" {
-// ///   let d = 1.0
-// ///   inspect!(d.reinterpret_as_int64(), content="4607182418800017408") // IEEE 754 representation of 1.0
-// ///   let neg = -0.0
-// ///   inspect!(neg.reinterpret_as_int64(), content="-9223372036854775808") // Sign bit set
-// /// }
-// /// ```
-// pub fn Double::reinterpret_as_int64(self : Double) -> Int64 = "%f64_to_i64_reinterpret"
-//
+
+///|
+/// Reinterprets the bits of a double-precision floating-point number as a 64-bit
+/// signed integer without performing any conversion. Preserves the exact bit
+/// pattern of the input value.
+///
+/// Parameters:
+///
+/// * `number` : The double-precision floating-point number whose bits will be
+/// reinterpreted.
+///
+/// Returns a 64-bit signed integer containing the same bit pattern as the input
+/// floating-point number.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Double::reinterpret_as_int64" {
+///   let d = 1.0
+///   inspect!(d.reinterpret_as_int64(), content="4607182418800017408") // IEEE 754 representation of 1.0
+///   let neg = -0.0
+///   inspect!(neg.reinterpret_as_int64(), content="-9223372036854775808") // Sign bit set
+/// }
+/// ```
+pub fn Double::reinterpret_as_int64(self : Double) -> Int64 = "%f64_to_i64_reinterpret"
+
 // ///|
 // /// Reinterprets the bits of a double-precision floating-point number as an
 // /// unsigned 64-bit integer. The bit pattern is preserved during the conversion,
@@ -1019,30 +1019,30 @@ pub fn Int64::reinterpret_as_double(self : Int64) -> Double = "%i64_to_f64_reint
 // /// @alert deprecated "Use `reinterpret_as_uint64` instead"
 // /// @coverage.skip
 // pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reinterpret"
-//
-// ///|
-// /// Reinterprets a 64-bit signed integer as an unsigned 64-bit integer without
-// /// changing its bit pattern. The reinterpretation follows the standard two's
-// /// complement representation rules.
-// ///
-// /// Parameters:
-// ///
-// /// * `self` : The 64-bit signed integer to be reinterpreted.
-// ///
-// /// Returns a 64-bit unsigned integer that has the same bit pattern as the input.
-// ///
-// /// Example:
-// ///
-// /// ```moonbit
-// /// test "Int64::reinterpret_as_uint64" {
-// ///   let neg = -1L
-// ///   inspect!(neg.reinterpret_as_uint64(), content="18446744073709551615") // All bits set to 1
-// ///   let pos = 42L
-// ///   inspect!(pos.reinterpret_as_uint64(), content="42") // Positive numbers remain unchanged
-// /// }
-// /// ```
-// pub fn Int64::reinterpret_as_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reinterpret"
-//
+
+///|
+/// Reinterprets a 64-bit signed integer as an unsigned 64-bit integer without
+/// changing its bit pattern. The reinterpretation follows the standard two's
+/// complement representation rules.
+///
+/// Parameters:
+///
+/// * `self` : The 64-bit signed integer to be reinterpreted.
+///
+/// Returns a 64-bit unsigned integer that has the same bit pattern as the input.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Int64::reinterpret_as_uint64" {
+///   let neg = -1L
+///   inspect!(neg.reinterpret_as_uint64(), content="18446744073709551615") // All bits set to 1
+///   let pos = 42L
+///   inspect!(pos.reinterpret_as_uint64(), content="42") // Positive numbers remain unchanged
+/// }
+/// ```
+pub fn Int64::reinterpret_as_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reinterpret"
+
 // ///|
 // /// Reinterprets a 64-bit unsigned integer as a 64-bit signed integer. The bits
 // /// of the number remain unchanged; only the interpretation of these bits
@@ -1090,30 +1090,30 @@ pub fn Int64::reinterpret_as_double(self : Int64) -> Double = "%i64_to_f64_reint
 // /// }
 // /// ```
 // pub fn UInt64::reinterpret_as_int64(self : UInt64) -> Int64 = "%u64.to_i64_reinterpret"
-//
-// ///|
-// /// Converts a 64-bit unsigned integer to a 32-bit unsigned integer by truncating
-// /// the higher 32 bits.
-// ///
-// /// Parameters:
-// ///
-// /// * `self` : The 64-bit unsigned integer to be converted.
-// ///
-// /// Returns a 32-bit unsigned integer containing the lower 32 bits of the input
-// /// value.
-// ///
-// /// Example:
-// ///
-// /// ```moonbit
-// /// test "UInt64::to_uint" {
-// ///   let big = 0xFFFFFFFFFFFFFFFFUL // max value of UInt64
-// ///   inspect!(big.to_uint(), content="4294967295") // 0xFFFFFFFF, max value of UInt
-// ///   let small = 42UL
-// ///   inspect!(small.to_uint(), content="42")
-// /// }
-// /// ```
-// pub fn UInt64::to_uint(self : UInt64) -> UInt = "%u64.to_u32"
-//
+
+///|
+/// Converts a 64-bit unsigned integer to a 32-bit unsigned integer by truncating
+/// the higher 32 bits.
+///
+/// Parameters:
+///
+/// * `self` : The 64-bit unsigned integer to be converted.
+///
+/// Returns a 32-bit unsigned integer containing the lower 32 bits of the input
+/// value.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "UInt64::to_uint" {
+///   let big = 0xFFFFFFFFFFFFFFFFUL // max value of UInt64
+///   inspect!(big.to_uint(), content="4294967295") // 0xFFFFFFFF, max value of UInt
+///   let small = 42UL
+///   inspect!(small.to_uint(), content="42")
+/// }
+/// ```
+pub fn UInt64::to_uint(self : UInt64) -> UInt = "%u64.to_u32"
+
 // ///|
 // /// Converts an unsigned 64-bit integer to a 32-bit signed integer. The
 // /// conversion truncates the value to fit within the 32-bit range, possibly
@@ -1567,33 +1567,33 @@ pub fn Int64::reinterpret_as_double(self : Int64) -> Double = "%i64_to_f64_reint
 // /// }
 // /// ```
 // pub fn UInt64::op_shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
-//
-// ///|
-// /// Performs a logical right shift operation on a 64-bit unsigned integer by a
-// /// specified number of bits. All bits shifted beyond the least significant bit
-// /// are discarded, and zeros are shifted in from the most significant bit.
-// ///
-// /// Parameters:
-// ///
-// /// * `self` : The 64-bit unsigned integer to be shifted.
-// /// * `shift` : The number of positions to shift right. Only the least
-// /// significant 6 bits of this value are used, effectively making the shift count
-// /// always between 0 and 63.
-// ///
-// /// Returns a new `UInt64` value representing the result of the right shift
-// /// operation.
-// ///
-// /// Example:
-// ///
-// /// ```moonbit
-// /// test "UInt64::op_shr" {
-// ///   let x = 0xFF00FF00FF00FF00UL
-// ///   inspect!(x >> 8, content="71777214294589695") // Shifted right by 8 bits
-// ///   inspect!(x >> 64, content="18374966859414961920") // Equivalent to x >> 0 due to masking
-// /// }
-// /// ```
-// pub fn UInt64::op_shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
-//
+
+///|
+/// Performs a logical right shift operation on a 64-bit unsigned integer by a
+/// specified number of bits. All bits shifted beyond the least significant bit
+/// are discarded, and zeros are shifted in from the most significant bit.
+///
+/// Parameters:
+///
+/// * `self` : The 64-bit unsigned integer to be shifted.
+/// * `shift` : The number of positions to shift right. Only the least
+/// significant 6 bits of this value are used, effectively making the shift count
+/// always between 0 and 63.
+///
+/// Returns a new `UInt64` value representing the result of the right shift
+/// operation.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "UInt64::op_shr" {
+///   let x = 0xFF00FF00FF00FF00UL
+///   inspect!(x >> 8, content="71777214294589695") // Shifted right by 8 bits
+///   inspect!(x >> 64, content="18374966859414961920") // Equivalent to x >> 0 due to masking
+/// }
+/// ```
+pub fn UInt64::op_shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
+
 // ///|
 // /// Counts the number of leading zero bits in a 64-bit unsigned integer, starting
 // /// from the most significant bit.

@@ -5,41 +5,25 @@ type Timestamp Int64 derive(Eq, Compare)
 type Timestamptz Int64 derive(Eq, Compare)
 
 ///|
-type Interval
+extern type Interval
 
 ///|
-extern "wasm" fn timestamp_in(str : String, tz : Bool) -> Int64 =
-  #| (func (import "env" "timestamp_in")
-  #|  (param (ref extern)) (param i32) (result i64))
+fn timestamp_in(str : String, tz : Bool) -> Int64 = "env" "timestamp_in"
 
 ///|
-extern "wasm" fn timestamp_out(timestamp : Int64, tz : Bool) -> String =
-  #| (func (import "env" "timestamp_out")
-  #|  (param i64) (param i32) (result (ref extern)))
+fn timestamp_out(timestamp : Int64, tz : Bool) -> String = "env" "timestamp_out"
 
 ///|
-extern "wasm" fn timestamp_pl_interval(
-  timestamp : Int64,
-  interval : Interval
-) -> Int64 =
-  #| (func (import "env" "timestamp_pl_interval")
-  #|  (param i64) (param (ref extern)) (result i64))
+fn timestamp_pl_interval(timestamp : Int64, interval : Interval) -> Int64 = "env" "timestamp_pl_interval"
 
 ///|
-extern "wasm" fn timestamp_mi_interval(
-  timestamp : Int64,
-  interval : Interval
-) -> Int64 =
-  #| (func (import "env" "timestamp_mi_interval")
-  #|  (param i64) (param (ref extern)) (result i64))
+fn timestamp_mi_interval(timestamp : Int64, interval : Interval) -> Int64 = "env" "timestamp_mi_interval"
 
 ///|
-extern "wasm" fn interval_in(str : String) -> Interval =
-  #| (func (import "env" "interval_in")
-  #|  (param (ref extern)) (result (ref extern)))
+fn interval_in(str : String) -> Interval = "env" "interval_in"
 
 ///|
-extern "wasm" fn interval_make(
+fn interval_make(
   years : Int,
   months : Int,
   weeks : Int,
@@ -47,44 +31,22 @@ extern "wasm" fn interval_make(
   hours : Int,
   minutes : Int,
   seconds : Double
-) -> Interval =
-  #| (func (import "env" "interval_make")
-  #|  (param i32) (param i32) (param i32) (param i32)
-  #|  (param i32) (param i32) (param f64) (result (ref extern)))
+) -> Interval = "env" "interval_make"
 
 ///|
-extern "wasm" fn interval_out(interval : Interval) -> String =
-  #| (func (import "env" "interval_out")
-  #|  (param (ref extern)) (result (ref extern)))
+fn interval_out(interval : Interval) -> String = "env" "interval_out"
 
 ///|
-extern "wasm" fn interval_pl(
-  interval1 : Interval,
-  interval2 : Interval
-) -> Interval =
-  #| (func (import "env" "interval_pl")
-  #|  (param (ref extern)) (param (ref extern)) (result (ref extern)))
+fn interval_pl(interval1 : Interval, interval2 : Interval) -> Interval = "env" "interval_pl"
 
 ///|
-extern "wasm" fn interval_mi(
-  interval1 : Interval,
-  interval2 : Interval
-) -> Interval =
-  #| (func (import "env" "interval_mi")
-  #|  (param (ref extern)) (param (ref extern)) (result (ref extern)))
+fn interval_mi(interval1 : Interval, interval2 : Interval) -> Interval = "env" "interval_mi"
 
 ///|
-extern "wasm" fn interval_mul(interval : Interval, factor : Double) -> Interval =
-  #| (func (import "env" "interval_mul")
-  #|  (param (ref extern)) (param f64) (result (ref extern)))
+fn interval_mul(interval : Interval, factor : Double) -> Interval = "env" "interval_mul"
 
 ///|
-extern "wasm" fn interval_div(
-  interval : Interval,
-  divisor : Double
-) -> Interval =
-  #| (func (import "env" "interval_div")
-  #|  (param (ref extern)) (param f64) (result (ref extern)))
+fn interval_div(interval : Interval, divisor : Double) -> Interval = "env" "interval_div"
 
 ///|
 pub impl FromStr for Timestamp with from_string(str) {
@@ -97,31 +59,29 @@ pub impl FromStr for Timestamptz with from_string(str) {
 }
 
 ///|
-pub impl FromStr for Interval with from_string(str) { interval_in(str) }
+pub impl FromStr for Interval with from_string(str) {
+  interval_in(str)
+}
 
 ///|
-pub fn Timestamp::to_string(self : Timestamp) -> String {
+impl Obj for Timestamp with typname() {
+  "timestamp"
+}
+
+///|
+impl Obj for Timestamptz with typname() {
+  "timestamptz"
+}
+
+///|
+impl Obj for Interval with typname() {
+  "interval"
+}
+
+///|
+pub impl Show for Timestamp with to_string(self) {
   timestamp_out(self._, false)
 }
-
-///|
-pub fn Timestamptz::to_string(self : Timestamptz) -> String {
-  timestamp_out(self._, true)
-}
-
-///|
-pub fn Interval::to_string(self : Interval) -> String {
-  interval_out(self)
-}
-
-///|
-impl Obj for Timestamp with typname() { "timestamp" }
-
-///|
-impl Obj for Timestamptz with typname() { "timestamptz" }
-
-///|
-impl Obj for Interval with typname() { "interval" }
 
 ///|
 pub impl Show for Timestamp with output(self, logger) {
@@ -129,8 +89,18 @@ pub impl Show for Timestamp with output(self, logger) {
 }
 
 ///|
+pub impl Show for Timestamptz with to_string(self) {
+  timestamp_out(self._, true)
+}
+
+///|
 pub impl Show for Timestamptz with output(self, logger) {
   output_with_typname(self, logger)
+}
+
+///|
+pub impl Show for Interval with to_string(self) {
+  interval_out(self)
 }
 
 ///|
@@ -197,10 +167,16 @@ pub impl FromJson for Interval with from_json(json, path) {
 }
 
 ///|
-pub impl ToJson for Timestamp with to_json(self) { String(self.to_string()) }
+pub impl ToJson for Timestamp with to_json(self) {
+  String(self.to_string())
+}
 
 ///|
-pub impl ToJson for Timestamptz with to_json(self) { String(self.to_string()) }
+pub impl ToJson for Timestamptz with to_json(self) {
+  String(self.to_string())
+}
 
 ///|
-pub impl ToJson for Interval with to_json(self) { String(self.to_string()) }
+pub impl ToJson for Interval with to_json(self) {
+  String(self.to_string())
+}

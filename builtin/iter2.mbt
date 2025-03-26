@@ -22,14 +22,14 @@
 // ```
 type Iter2[A, B] ((A, B) -> IterResult) -> IterResult
 
-// ///|
-// //TODO: Add intrinsic for Iter::run
-// pub fn Iter2::run[A, B](
-//   self : Iter2[A, B],
-//   f : (A, B) -> IterResult
-// ) -> IterResult {
-//   (self._)(f)
-// }
+///|
+//TODO: Add intrinsic for Iter::run
+pub fn Iter2::run[A, B](
+  self : Iter2[A, B],
+  f : (A, B) -> IterResult
+) -> IterResult {
+  (self._)(f)
+}
 
 // ///|
 // pub impl[A : Show, B : Show] Show for Iter2[A, B] with output(self, logger) {

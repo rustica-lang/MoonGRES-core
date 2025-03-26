@@ -1,17 +1,18 @@
 ///|
-pub extern "wasm" fn bytes_decode(
-  bytes : Bytes,
-  start : Int,
-  length : Int,
-  encoding : String
-) -> String =
-  #| (func (import "env" "bytes_decode")
-  #|  (param (ref $moonbit.bytes)) (param i32) (param i32) (param (ref extern))
-  #|  (result (ref extern)))
-  #|
+pub impl Show for BytesView with to_string(self) {
+  bytea_substr(self.bytes, self.start, self.len).to_string()
+}
 
 ///|
-fn unsafe_to_fixed_array(self : Bytes) -> FixedArray[Byte] = "%identity"
+pub impl Show for BytesView with output(self, logger) {
+  logger.write_string("BytesView<")
+  Buffer::new(size_hint=self.len)
+  ..write_bytes_view(self)
+  .to_bytes()
+  .output(logger)
+  logger.write_string(self.to_string())
+  logger.write_char('>')
+}
 
 ///|
 fn unsafe_to_bytes(self : UninitializedArray[Byte]) -> Bytes = "%identity"
@@ -36,22 +37,10 @@ pub fn BytesView::op_add(self : BytesView, other : BytesView) -> BytesView {
       len: self.len + other.len,
     }
   } else {
-    let rv : FixedArray[Byte] = FixedArray::make(self.len + other.len, b'\x00')
-    FixedArray::unsafe_blit(
-      rv,
-      0,
-      self.bytes.unsafe_to_fixed_array(),
-      self.start,
-      self.len,
-    )
-    FixedArray::unsafe_blit(
-      rv,
-      self.len,
-      other.bytes.unsafe_to_fixed_array(),
-      other.start,
-      other.len,
-    )
-    rv.unsafe_to_bytes()[:]
+    let buf = Buffer::new(size_hint=self.len + other.len)
+    buf.write_bytes_view(self)
+    buf.write_bytes_view(other)
+    buf.to_bytes()[:]
   }
 }
 
@@ -61,14 +50,4 @@ pub fn BytesView::decode(
   encoding~ : String = "utf8"
 ) -> String {
   bytes_decode(self.bytes, self.start, self.len, encoding)
-}
-
-///|
-pub fn to_bytes_view(self : Array[Byte]) -> BytesView {
-  self.buf.unsafe_to_bytes()[:self.len]
-}
-
-///|
-pub fn BytesView::make(size : Int) -> BytesView {
-  UninitializedArray::make(size).unsafe_to_bytes()[:]
 }

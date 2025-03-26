@@ -148,24 +148,24 @@
 // pub fn Byte::op_sub(self : Byte, that : Byte) -> Byte {
 //   (self.to_int() - that.to_int()).to_byte()
 // }
-//
-// ///|
-// /// Compares two `Byte` values and returns an integer indicating their relative
-// /// order.
-// ///
-// /// Parameters:
-// ///
-// /// - `byte1` : The first `Byte` value to compare.
-// /// - `byte2` : The second `Byte` value to compare.
-// ///
-// /// Returns an integer where:
-// /// - A value less than 0 indicates that `byte1` is less than `byte2`.
-// /// - A value of 0 indicates that `byte1` is equal to `byte2`.
-// /// - A value greater than 0 indicates that `byte1` is greater than `byte2`.
-// pub impl Compare for Byte with compare(self : Byte, that : Byte) -> Int {
-//   self.to_int().compare(that.to_int())
-// }
-//
+
+///|
+/// Compares two `Byte` values and returns an integer indicating their relative
+/// order.
+///
+/// Parameters:
+///
+/// - `byte1` : The first `Byte` value to compare.
+/// - `byte2` : The second `Byte` value to compare.
+///
+/// Returns an integer where:
+/// - A value less than 0 indicates that `byte1` is less than `byte2`.
+/// - A value of 0 indicates that `byte1` is equal to `byte2`.
+/// - A value greater than 0 indicates that `byte1` is greater than `byte2`.
+pub impl Compare for Byte with compare(self : Byte, that : Byte) -> Int {
+  self.to_int().compare(that.to_int())
+}
+
 // ///|
 // fn alphabet(self : Int) -> String {
 //   match self {
@@ -314,17 +314,17 @@ pub impl Default for Byte with default() {
 //   (self.to_int() ^ that.to_int()).to_byte()
 // }
 
-// ///|
-// /// Converts a `Byte` to a `UInt`.
-// ///
-// /// Parameters:
-// ///
-// /// - `byte` : The `Byte` value to be converted.
-// ///
-// /// Returns the `UInt` representation of the `Byte`.
-// pub fn Byte::to_uint(self : Byte) -> UInt {
-//   self.to_int().reinterpret_as_uint()
-// }
+///|
+/// Converts a `Byte` to a `UInt`.
+///
+/// Parameters:
+///
+/// - `byte` : The `Byte` value to be converted.
+///
+/// Returns the `UInt` representation of the `Byte`.
+pub fn Byte::to_uint(self : Byte) -> UInt {
+  self.to_int().reinterpret_as_uint()
+}
 
 // ///|
 // /// Shifts the bits of the `Byte` value to the left by the specified number of

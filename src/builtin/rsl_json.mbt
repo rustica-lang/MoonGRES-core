@@ -1,26 +1,26 @@
 ///|
-type JsonText
+extern type JsonText
 
 ///|
-extern "wasm" fn json_in(str : String) -> JsonText =
-  #| (func (import "env" "json_in")
-  #|  (param (ref extern)) (result (ref extern)))
+fn json_in(str : String) -> JsonText = "env" "json_in"
 
 ///|
-extern "wasm" fn json_out(json : JsonText) -> String =
-  #| (func (import "env" "json_out")
-  #|  (param (ref extern)) (result (ref extern)))
+fn json_out(json : JsonText) -> String = "env" "json_out"
 
 ///|
-pub impl FromStr for JsonText with from_string(str) { json_in(str) }
-
-///|
-pub fn JsonText::to_string(self : JsonText) -> String {
-  json_out(self)
+pub impl FromStr for JsonText with from_string(str) {
+  json_in(str)
 }
 
 ///|
-impl Obj for JsonText with typname() { "json" }
+impl Obj for JsonText with typname() {
+  "json"
+}
+
+///|
+pub impl Show for JsonText with to_string(self) {
+  json_out(self)
+}
 
 ///|
 pub impl Show for JsonText with output(self, logger) {

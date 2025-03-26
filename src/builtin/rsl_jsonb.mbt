@@ -1,97 +1,72 @@
 ///|
-type Jsonb
+extern type Jsonb
 
 ///|
-type JsonbValue
+extern type JsonbValue
 
 ///|
-extern "wasm" fn jsonb_in(str : String) -> Jsonb =
-  #| (func (import "env" "jsonb_in")
-  #|  (param (ref extern)) (result (ref extern)))
+fn jsonb_in(str : String) -> Jsonb = "env" "jsonb_in"
 
 ///|
-extern "wasm" fn jsonb_out(jsonb : Jsonb) -> String =
-  #| (func (import "env" "jsonb_out")
-  #|  (param (ref extern)) (result (ref extern)))
+fn jsonb_out(jsonb : Jsonb) -> String = "env" "jsonb_out"
 
 ///|
-extern "wasm" fn jsonb_value_to_jsonb(val : JsonbValue) -> Jsonb =
-  #| (func (import "env" "jsonb_value_to_jsonb")
-  #|  (param (ref extern)) (result (ref extern)))
+fn jsonb_value_to_jsonb(val : JsonbValue) -> Jsonb = "env" "jsonb_value_to_jsonb"
 
 ///|
-extern "wasm" fn jsonb_value_new_null() -> JsonbValue =
-  #| (func (import "env" "jsonb_value_new_null")
-  #|  (result (ref extern)))
+fn jsonb_value_new_null() -> JsonbValue = "env" "jsonb_value_new_null"
 
 ///|
-extern "wasm" fn jsonb_value_new_string(string : String) -> JsonbValue =
-  #| (func (import "env" "jsonb_value_new_string")
-  #|  (param (ref extern)) (result (ref extern)))
+fn jsonb_value_new_string(string : String) -> JsonbValue = "env" "jsonb_value_new_string"
 
 ///|
-extern "wasm" fn jsonb_value_new_numeric(number : Double) -> JsonbValue =
-  #| (func (import "env" "jsonb_value_new_numeric")
-  #|  (param f64) (result (ref extern)))
+fn jsonb_value_new_numeric(number : Double) -> JsonbValue = "env" "jsonb_value_new_numeric"
 
 ///|
-extern "wasm" fn jsonb_value_new_bool(value : Bool) -> JsonbValue =
-  #| (func (import "env" "jsonb_value_new_bool")
-  #|  (param i32) (result (ref extern)))
+fn jsonb_value_new_bool(value : Bool) -> JsonbValue = "env" "jsonb_value_new_bool"
 
 ///|
-extern "wasm" fn jsonb_value_new_array(len : Int) -> JsonbValue =
-  #| (func (import "env" "jsonb_value_new_array")
-  #|  (param i32) (result (ref extern)))
+fn jsonb_value_new_array(len : Int) -> JsonbValue = "env" "jsonb_value_new_array"
 
 ///|
-extern "wasm" fn jsonb_value_array_set(
+fn jsonb_value_array_set(
   array : JsonbValue,
   index : Int,
   member : JsonbValue
-) -> Unit =
-  #| (func (import "env" "jsonb_value_array_set")
-  #|  (param (ref extern)) (param i32) (param (ref extern))
-  #|  (result i32))
+) -> Unit = "env" "jsonb_value_array_set"
 
 ///|
-extern "wasm" fn jsonb_value_new_object(size : Int) -> JsonbValue =
-  #| (func (import "env" "jsonb_value_new_object")
-  #|  (param i32) (result (ref extern)))
+fn jsonb_value_new_object(size : Int) -> JsonbValue = "env" "jsonb_value_new_object"
 
 ///|
-extern "wasm" fn jsonb_value_object_set(
+fn jsonb_value_object_set(
   object : JsonbValue,
   order : Int,
   key : JsonbValue,
   member : JsonbValue
-) -> Unit =
-  #| (func (import "env" "jsonb_value_object_set")
-  #|  (param (ref extern)) (param i32) (param (ref extern)) (param (ref extern))
-  #|  (result i32))
+) -> Unit = "env" "jsonb_value_object_set"
 
 ///|
-extern "wasm" fn json_parse(buf : Bytes, start : Int, length : Int) -> Bool =
-  #| (func (import "env" "json_parse")
-  #|  (param (ref $moonbit.bytes)) (param i32) (param i32)
-  #|  (result i32))
+fn json_parse(buf : Bytes, start : Int, length : Int) -> Bool = "env" "json_parse"
 
 ///|
-extern "wasm" fn jsonb_iterate(jsonb : Jsonb) -> Bool =
-  #| (func (import "env" "jsonb_iterate")
-  #|  (param (ref extern)) (result i32))
+fn jsonb_iterate(jsonb : Jsonb) -> Bool = "env" "jsonb_iterate"
 
 //|
 ///|
-pub impl FromStr for Jsonb with from_string(str) { jsonb_in(str) }
-
-///|
-pub fn Jsonb::to_string(self : Jsonb) -> String {
-  jsonb_out(self)
+pub impl FromStr for Jsonb with from_string(str) {
+  jsonb_in(str)
 }
 
 ///|
-impl Obj for Jsonb with typname() { "jsonb" }
+impl Obj for Jsonb with typname() {
+  "jsonb"
+}
+
+///|
+pub impl Show for Jsonb with to_string(self) {
+  jsonb_out(self)
+}
 
 ///|
 pub impl Show for Jsonb with output(self, logger) {
@@ -152,14 +127,14 @@ fn json_parse_push_value(json : Json, push_stack~ : Bool) -> Unit {
   match json_parse_path.val {
     Root => json_parse_stack.push(json)
     Index(_) => {
-      guard let Some(Array(arr)) = json_parse_stack.last()
+      guard json_parse_stack.last() is Some(Array(arr))
       arr.push(json)
       if push_stack {
         json_parse_stack.push(json)
       }
     }
     Key(_, key~) => {
-      guard let Some(Object(obj)) = json_parse_stack.last()
+      guard json_parse_stack.last() is Some(Object(obj))
       obj[key] = json
       if push_stack {
         json_parse_stack.push(json)
@@ -197,12 +172,13 @@ pub fn json_parse_object_start() -> Unit {
 
 ///|
 pub fn json_parse_object_field_start(key : String) -> Unit {
-  json_parse_path.val.update_key_inplace(key)
+  guard json_parse_path.val is (Key(_) as k)
+  k.key = key
 }
 
 ///|
 pub fn json_parse_object_end() -> Unit {
-  guard let Key(parent, ..) = json_parse_path.val
+  guard json_parse_path.val is Key(parent, ..)
   json_parse_path.val = parent
   match parent {
     Root => ()
@@ -219,7 +195,7 @@ pub fn json_parse_array_start() -> Unit {
 
 ///|
 pub fn json_parse_array_end() -> Unit {
-  guard let Index(parent, ..) = json_parse_path.val
+  guard json_parse_path.val is Index(parent, ..)
   json_parse_path.val = parent
   match parent {
     Root => ()

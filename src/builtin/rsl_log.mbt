@@ -14,9 +14,7 @@ enum LogLevel {
 }
 
 ///|
-extern "wasm" fn env_ereport(level : Int, msg : String) -> Unit =
-  #| (func (import "env" "ereport")
-  #|  (param i32) (param (ref extern)) (result i32))
+fn env_ereport(level : Int, msg : String) -> Unit = "env" "ereport"
 
 ///|
 pub fn ereport(level : LogLevel, msg : String) -> Unit {

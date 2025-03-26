@@ -211,7 +211,7 @@ pub fn last[A](self : Array[A]) -> A? {
 //   Array::makei(len, fn(x) { X::arbitrary(x, rs) })
 // }
 
-///|
-pub fn join(self : Array[String], separator : String) -> String {
-  @string.concat(self, separator~)
-}
+// ///|
+// pub fn join(self : Array[String], separator : String) -> String {
+//   @string.concat(self, separator~)
+// }

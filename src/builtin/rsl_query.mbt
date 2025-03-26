@@ -1,13 +1,8 @@
 ///|
-extern "wasm" fn env_execute_statement(idx : Int) -> Int =
-  #| (func (import "env" "execute_statement")
-  #|  (param i32)
-  #|  (result i32))
+fn env_execute_statement(idx : Int) -> Int = "env" "execute_statement"
 
 ///|
-extern "wasm" fn env_tid_to_oid(tid : UUID) -> Int =
-  #| (func (import "env" "tid_to_oid")
-  #|  (param (ref extern)) (result i32))
+fn env_tid_to_oid(tid : UUID) -> Int = "env" "tid_to_oid"
 
 ///|
 pub(all) struct Query[ARGS, RET] {
@@ -54,7 +49,7 @@ pub fn execute[ARGS](self : Query[ARGS, Unit], args : ARGS) -> Unit {
 
 ///|
 pub fn populate_args_oids[ARGS, RET](self : Query[ARGS, RET]) -> Unit {
-  guard let Some(tids) = self.args_tids else { None => () }
+  guard self.args_tids is Some(tids) else { () }
   self.args_oids.clear()
   for tid in tids {
     self.args_oids.push(env_tid_to_oid(tid))

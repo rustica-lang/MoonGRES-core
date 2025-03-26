@@ -710,48 +710,18 @@ pub fn starts_with(self : String, str : String) -> Bool {
 //   }
 // }
 
-// ///|
-// /// Test if the length of the string is equal to the given length.
-// ///
-// /// This has O(n) complexity where n is the length in the parameter.
-// pub fn String::length_eq(self : String, len : Int) -> Bool {
-//   let codeunit_len = self.charcode_length()
-//   for index = 0, count = 0
-//       index < codeunit_len && count < len
-//       index = index + 1, count = count + 1 {
-//     let c1 = self.unsafe_charcode_at(index)
-//     if is_leading_surrogate(c1) && index + 1 < codeunit_len {
-//       let c2 = self.unsafe_charcode_at(index + 1)
-//       if is_trailing_surrogate(c2) {
-//         continue index + 2, count + 1
-//       } else {
-//         abort("invalid surrogate pair")
-//       }
-//     }
-//   } else {
-//     count == len && index == codeunit_len
-//   }
-// }
+///|
+/// Test if the length of the string is equal to the given length.
+///
+/// This has O(n) complexity where n is the length in the parameter.
+pub fn String::length_eq(self : String, len : Int) -> Bool {
+  self.length() == len
+}
 
-// ///|
-// /// Test if the length of the string is greater than or equal to the given length.
-// ///
-// /// This has O(n) complexity where n is the length in the parameter.
-// pub fn String::length_ge(self : String, len : Int) -> Bool {
-//   let codeunit_len = self.charcode_length()
-//   for index = 0, count = 0
-//       index < codeunit_len && count < len
-//       index = index + 1, count = count + 1 {
-//     let c1 = self.unsafe_charcode_at(index)
-//     if is_leading_surrogate(c1) && index + 1 < codeunit_len {
-//       let c2 = self.unsafe_charcode_at(index + 1)
-//       if is_trailing_surrogate(c2) {
-//         continue index + 2, count + 1
-//       } else {
-//         abort("invalid surrogate pair")
-//       }
-//     }
-//   } else {
-//     count >= len
-//   }
-// }
+///|
+/// Test if the length of the string is greater than or equal to the given length.
+///
+/// This has O(n) complexity where n is the length in the parameter.
+pub fn String::length_ge(self : String, len : Int) -> Bool {
+  self.length() >= len
+}

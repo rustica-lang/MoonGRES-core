@@ -1,5 +1,5 @@
 ///|
-type Buffer
+extern type Buffer
 
 // ///|
 // pub extern "wasm" fn length(self : Buffer) -> Int =
@@ -20,20 +20,15 @@ pub fn write_string(self : Buffer, str : String) -> Unit {
 }
 
 ///|
-pub extern "wasm" fn sb_to_bytes(buf : Buffer) -> Bytes =
-  #| (func (import "env" "sb_to_bytes")
-  #|  (param (ref extern)) (result (ref $moonbit.bytes)))
+fn sb_to_bytes(buf : Buffer) -> Bytes = "env" "sb_to_bytes"
 
 ///|
-pub extern "wasm" fn sb_write_bytes(
+fn sb_write_bytes(
   buf : Buffer,
   value : Bytes,
   start : Int,
   length : Int
-) -> Unit =
-  #| (func (import "env" "sb_write_bytes")
-  #|  (param (ref extern)) (param (ref $moonbit.bytes)) (param i32) (param i32)
-  #|  (result i32))
+) -> Unit = "env" "sb_write_bytes"
 
 ///|
 pub fn write_bytes(self : Buffer, value : Bytes) -> Unit {
@@ -43,6 +38,14 @@ pub fn write_bytes(self : Buffer, value : Bytes) -> Unit {
 ///|
 pub fn write_bytes_view(self : Buffer, value : BytesView) -> Unit {
   sb_write_bytes(self, value.bytes, value.start, value.len)
+}
+
+///|
+fn sb_write_byte(buf : Buffer, value : Byte) -> Unit = "env" "sb_write_byte"
+
+///|
+pub fn write_byte(self : Buffer, value : Byte) -> Unit {
+  sb_write_byte(self, value)
 }
 
 ///|

@@ -1,39 +1,28 @@
 ///|
-type StringBuilder
+extern type StringBuilder
 
 ///|
 fn as_buffer(self : StringBuilder) -> Buffer = "%identity"
 
 ///|
-extern "wasm" fn sb_new(size_hint : Int) -> StringBuilder =
-  #| (func (import "env" "sb_new")
-  #|  (param i32) (result (ref extern)))
+fn sb_new(size_hint : Int) -> StringBuilder = "env" "sb_new"
 
 ///|
-extern "wasm" fn sb_write_string(sb : StringBuilder, str : String) -> Unit =
-  #| (func (import "env" "sb_write_string")
-  #|  (param (ref extern)) (param (ref extern)) (result i32))
+fn sb_write_string(sb : StringBuilder, str : String) -> Unit = "env" "sb_write_string"
 
 ///|
-extern "wasm" fn sb_write_substring(
+fn sb_write_substring(
   sb : StringBuilder,
   str : String,
   start : Int,
   length : Int
-) -> Unit =
-  #| (func (import "env" "sb_write_substring")
-  #|  (param (ref extern)) (param (ref extern)) (param i32) (param i32)
-  #|  (result i32))
+) -> Unit = "env" "sb_write_substring"
 
 ///|
-extern "wasm" fn sb_write_char(sb : StringBuilder, ch : Char) -> Unit =
-  #| (func (import "env" "sb_write_char")
-  #|  (param (ref extern)) (param i32) (result i32))
+fn sb_write_char(sb : StringBuilder, ch : Char) -> Unit = "env" "sb_write_char"
 
 ///|
-extern "wasm" fn sb_to_string(sb : StringBuilder) -> String =
-  #| (func (import "env" "sb_to_string")
-  #|  (param (ref extern)) (result (ref extern)))
+fn sb_to_string(sb : StringBuilder) -> String = "env" "sb_to_string"
 
 ///|
 pub fn StringBuilder::new(size_hint~ : Int = 0) -> StringBuilder {

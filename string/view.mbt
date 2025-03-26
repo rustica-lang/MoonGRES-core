@@ -162,49 +162,21 @@ pub fn StringView::length(self : StringView) -> Int {
   self.end - self.start
 }
 
-// ///|
-// /// Test if the length of the view is equal to the given length.
-// ///
-// /// This has O(n) complexity where n is the length in the parameter.
-// pub fn length_eq(self : View, len : Int) -> Bool {
-//   for index = self.start, self_len = 0
-//       index < self.end && self_len < len
-//       index = index + 1, self_len = self_len + 1 {
-//     let c1 = self.str.unsafe_charcode_at(index)
-//     if is_leading_surrogate(c1) && index + 1 < self.end {
-//       let c2 = self.str.unsafe_charcode_at(index + 1)
-//       if is_trailing_surrogate(c2) {
-//         continue index + 2, self_len + 1
-//       } else {
-//         abort("invalid surrogate pair")
-//       }
-//     }
-//   } else {
-//     self_len == len && index == self.end
-//   }
-// }
+///|
+/// Test if the length of the view is equal to the given length.
+///
+/// This has O(n) complexity where n is the length in the parameter.
+pub fn length_eq(self : StringView, len : Int) -> Bool {
+  self.length() == len
+}
 
-// ///|
-// /// Test if the length of the view is greater than or equal to the given length.
-// ///
-// /// This has O(n) complexity where n is the length in the parameter.
-// pub fn length_ge(self : View, len : Int) -> Bool {
-//   for index = self.start, self_len = 0
-//       index < self.end && self_len < len
-//       index = index + 1, self_len = self_len + 1 {
-//     let c1 = self.str.unsafe_charcode_at(index)
-//     if is_leading_surrogate(c1) && index + 1 < self.end {
-//       let c2 = self.str.unsafe_charcode_at(index + 1)
-//       if is_trailing_surrogate(c2) {
-//         continue index + 2, self_len + 1
-//       } else {
-//         abort("invalid surrogate pair")
-//       }
-//     }
-//   } else {
-//     self_len >= len
-//   }
-// }
+///|
+/// Test if the length of the view is greater than or equal to the given length.
+///
+/// This has O(n) complexity where n is the length in the parameter.
+pub fn length_ge(self : StringView, len : Int) -> Bool {
+  self.length() >= len
+}
 
 ///|
 /// Creates a `View` into a `String`.

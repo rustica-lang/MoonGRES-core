@@ -148,7 +148,7 @@ pub fn map[T, E, U](self : Result[T, E], f : (T) -> U) -> Result[U, E] {
 /// let y = x.or(0)
 /// assert_eq!(y, 6)
 /// ```
-pub fn or[T, E](self : Result[T, E], default : T) -> T {
+pub fn Result::or[T, E](self : Result[T, E], default : T) -> T {
   match self {
     Ok(value) => value
     Err(_) => default

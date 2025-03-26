@@ -220,10 +220,7 @@ fn default_message(self : ResponseStatus) -> String {
 }
 
 ///|
-extern "wasm" fn env_recv(buf : Bytes, start : Int, len : Int) -> Int =
-  #| (func (import "env" "recv")
-  #|  (param (ref $moonbit.bytes)) (param i32) (param i32)
-  #|  (result i32))
+fn env_recv(buf : Bytes, start : Int, len : Int) -> Int = "env" "recv"
 
 ///|
 fn recv(buf : BytesView) -> Int {
@@ -231,10 +228,7 @@ fn recv(buf : BytesView) -> Int {
 }
 
 ///|
-extern "wasm" fn env_send(buf : Bytes, start : Int, len : Int) -> Int =
-  #| (func (import "env" "send")
-  #|  (param (ref $moonbit.bytes)) (param i32) (param i32)
-  #|  (result i32))
+fn env_send(buf : Bytes, start : Int, len : Int) -> Int = "env" "send"
 
 ///|
 fn send(resp : Response) -> Int {
@@ -251,7 +245,7 @@ trait StringLike {
 ///|
 pub fn url_unquote[T : StringLike](str : T, plus~ : Bool = true) -> String {
   let len = str.length()
-  let buf = []
+  let buf = Buffer::new(size_hint=len)
   fn hex2int {
     '0'..='9' as ch => ch - '0'
     'A'..='F' as ch => ch - 'A' + 10
@@ -267,19 +261,19 @@ pub fn url_unquote[T : StringLike](str : T, plus~ : Bool = true) -> String {
         if hi >= 0 {
           let lo = hex2int(str[i + 2])
           if lo >= 0 {
-            buf.push((hi * 16 + lo).to_byte())
+            buf.write_byte((hi * 16 + lo).to_byte())
             continue i + 3
           }
         }
       }
     }
     if plus && ch == '+' {
-      buf.push(b' ')
+      buf.write_byte(b' ')
     } else {
-      buf.push(ch.to_int().to_byte())
+      buf.write_byte(ch.to_int().to_byte())
     }
   }
-  buf.to_bytes_view().decode()
+  buf.to_bytes().decode()
 }
 
 ///|
@@ -311,16 +305,12 @@ impl Hash for CaseInsensitiveKey with hash_combine(self, hasher) {
 }
 
 ///|
-impl[T : Show] Show for T? with output(self, logger) {
-  logger.write_string(self.to_string())
-}
-
-///|
 struct RequestBuilder {
   mut method_ : Method?
   mut url : String?
   mut version : (Int, Int)?
   headers : Map[CaseInsensitiveKey, String]
+  mut complete : Bool
 } derive(Default, Show)
 
 ///|
@@ -329,6 +319,7 @@ pub fn reset(self : RequestBuilder) -> Unit {
   self.url = None
   self.version = None
   self.headers.clear()
+  self.complete = false
 }
 
 ///|
@@ -345,7 +336,7 @@ let buf_size : Int = 64 * 1024
 pub fn Context::new() -> Context {
   return {
     ready: b""[:],
-    avail: BytesView::make(buf_size),
+    avail: Bytes::make(buf_size, b'\x00')[:],
     req: Default::default(),
   }
 }
@@ -417,6 +408,7 @@ pub fn parse_http[T](
         OnVersion(major, minor) => ctx.req.version = Some((major, minor))
         OnHeader(field, value) =>
           ctx.req.headers[CaseInsensitiveKey(field)] = value
+        OnMessageComplete => ctx.req.complete = true
         _ => ()
       }
       match f!(event, { ready, avail, req: ctx.req }) {
@@ -478,7 +470,7 @@ enum PathSegment {
   PathPart(String)
   QueryString(StringView)
   PathEnd
-}
+} derive(Show)
 
 ///|
 fn PathParser::of(url : String) -> PathParser {
@@ -625,16 +617,16 @@ fn main {
       Err(e) => {
         let (status, msg) = match e {
           JsonDecodeError((p, v)) =>
-            (BadRequest, "JsonDecodeError: \{p as Show} \{v}")
+            (BadRequest, "JsonDecodeError: \{p as &Show} \{v}")
           ProtocolError(v) => (InternalServerError, "ProtocolError: \{v}")
           ArgumentError(v) => (BadRequest, "ArgumentError: \{v}")
           _ => (InternalServerError, "Unknown error")
         }
-        match skip_request?(ctx) {
-          Ok(Return(_)) =>
-            send(response(status~, Buffer::new()..write_string(msg).to_bytes()))
-            |> ignore
-          _ => ()
+        if ctx.req.complete {
+          send(response(status~, Buffer::new()..write_string(msg).to_bytes()))
+          |> ignore
+        } else {
+          ereport(ERROR, "Unexpected error: \{msg}")
         }
         break
       }

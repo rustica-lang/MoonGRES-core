@@ -114,42 +114,28 @@ pub fn Method::from_int(method_ : Int) -> Method {
 }
 
 ///|
-extern "wasm" fn llhttp_execute(buf : Bytes, start : Int, len : Int) -> Int =
-  #| (func (import "env" "llhttp_execute")
-  #|  (param (ref $moonbit.bytes)) (param i32) (param i32)
-  #|  (result i32))
+fn llhttp_execute(buf : Bytes, start : Int, len : Int) -> Int = "env" "llhttp_execute"
 
 ///|
-extern "wasm" fn llhttp_resume() -> Int =
-  #| (func (import "env" "llhttp_resume") (result i32))
+fn llhttp_resume() -> Int = "env" "llhttp_resume"
 
 ///|
-extern "wasm" fn llhttp_finish(buf : Bytes) -> Int =
-  #| (func (import "env" "llhttp_finish")
-  #|  (param (ref $moonbit.bytes))
-  #|  (result i32))
+fn llhttp_finish(buf : Bytes) -> Int = "env" "llhttp_finish"
 
 ///|
-extern "wasm" fn llhttp_reset() -> Int =
-  #| (func (import "env" "llhttp_reset") (result i32))
+fn llhttp_reset() -> Int = "env" "llhttp_reset"
 
 ///|
-extern "wasm" fn llhttp_get_error_pos(buf : Bytes) -> Int =
-  #| (func (import "env" "llhttp_get_error_pos")
-  #|  (param (ref $moonbit.bytes))
-  #|  (result i32))
+fn llhttp_get_error_pos(buf : Bytes) -> Int = "env" "llhttp_get_error_pos"
 
 ///|
-extern "wasm" fn llhttp_get_method() -> Int =
-  #| (func (import "env" "llhttp_get_method") (result i32))
+fn llhttp_get_method() -> Int = "env" "llhttp_get_method"
 
 ///|
-extern "wasm" fn llhttp_get_http_major() -> Int =
-  #| (func (import "env" "llhttp_get_http_major") (result i32))
+fn llhttp_get_http_major() -> Int = "env" "llhttp_get_http_major"
 
 ///|
-extern "wasm" fn llhttp_get_http_minor() -> Int =
-  #| (func (import "env" "llhttp_get_http_minor") (result i32))
+fn llhttp_get_http_minor() -> Int = "env" "llhttp_get_http_minor"
 
 ///|
 enum HttpEvent {
@@ -199,6 +185,13 @@ pub fn on_method_complete() -> CallbackResult {
 pub fn on_url(url : BytesView) -> CallbackResult {
   state.url += Some(url)
   Ok
+}
+
+///|
+pub fn on_url_complete() -> CallbackResult {
+  let url = state.url.unwrap().decode(encoding="ascii")
+  state.event = Some(OnUrl(url))
+  Paused
 }
 
 ///|
