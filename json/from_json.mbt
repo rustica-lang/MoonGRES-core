@@ -54,6 +54,17 @@ pub impl FromJson for Int with from_json(json, path) {
 ///|
 pub impl FromJson for Int64 with from_json(json, path) {
   match json {
+    Number(n) => {
+      // Check if the number is within safe integer range
+      if n >= -9007199254740991.0 && n <= 9007199254740991.0 {
+        n.to_int64()
+      } else {
+        decode_error!(
+          path,
+          "Int64::from_json: number is out of safe integer range (-2^53 to 2^53-1), use string representation to avoid precision loss"
+        )
+      }
+    }
     String(str) => int8in(str)
     _ =>
       decode_error!(

@@ -41,3 +41,4 @@
 /// }
 /// ```
 pub fn Double::to_int(self : Double) -> Int = "%f64_to_i32"
+pub fn Double::to_int64(self : Double) -> Int64 = "%f64_to_i64"
