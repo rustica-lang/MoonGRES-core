@@ -2,10 +2,10 @@
   "import": ["moonbitlang/core/builtin", "moonbitlang/core/double", "moonbitlang/core/uint"],
   "targets": {
     "round_js.mbt": ["js"],
-    "round_wasm.mbt": ["wasm", "wasm-gc"],
-    "round.mbt": ["not", "js", "wasm", "wasm-gc"],
-    "to_int.mbt": ["not", "wasm", "wasm-gc"],
-    "to_int_wasm.mbt": ["wasm", "wasm-gc"]
+    "round_wasm.mbt": ["wasm", "wasm-gc", "moongres"],
+    "round.mbt": ["not", "js", "wasm", "wasm-gc", "moongres"],
+    "to_int.mbt": ["not", "wasm", "wasm-gc", "moongres"],
+    "to_int_wasm.mbt": ["wasm", "wasm-gc", "moongres"]
   },
   "test-import": ["moonbitlang/core/bytes"]
 }
