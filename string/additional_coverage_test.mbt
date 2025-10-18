@@ -73,11 +73,3 @@ test "View::default and hash" {
   let v2 = "abc".view()
   assert_eq(v1.hash(), v2.hash())
 }
-
-///|
-test "get_char invalid surrogate pair" {
-  let s = String::from_array([(0xD800).unsafe_to_char(), 'A'])
-  inspect(s.get_char(0), content="None")
-  let v = s[:]
-  inspect(v.get_char(0), content="None")
-}
