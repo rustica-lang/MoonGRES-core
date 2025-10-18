@@ -1,7 +1,8 @@
 {
   "targets": {
     "monotonic_clock_js.mbt": ["js"],
-    "monotonic_clock_wasm.mbt": ["wasm", "wasm-gc", "moongres"],
+    "monotonic_clock_wasm.mbt": ["wasm", "wasm-gc"],
+    "monotonic_clock_moongres.mbt": ["moongres"],
     "monotonic_clock_native.mbt": ["native", "llvm"]
   },
   "import": [

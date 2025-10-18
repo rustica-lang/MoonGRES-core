@@ -7,7 +7,8 @@
     "moonbitlang/core/option"
   ],
   "targets": {
-    "env_wasm.mbt": ["wasm", "wasm-gc", "moongres"],
+    "env_wasm.mbt": ["wasm", "wasm-gc"],
+    "env_moongres.mbt": ["moongres"],
     "env_js.mbt": ["js"],
     "env_native.mbt": ["native", "llvm"]
   }
