@@ -380,25 +380,10 @@ test "panic on invalid end index" {
 }
 
 ///|
-test "panic length_eq should panic on invalid surrogate pair" {
+test "panic on invalid surrogate pair" {
   // Create a string with an invalid surrogate pair:
   // 0xD800 is a leading surrogate, but followed by a non-trailing surrogate character 'A'
-  let str = String::from_array([(0xD800).unsafe_to_char(), 'A'])
-  let view = str[:]
-  // This will trigger abort("invalid surrogate pair") in length_eq
-  ignore(view.char_length_eq(1))
-}
-
-///|
-test "panic_length_ge invalid surrogate pair" {
-  let invalid_surrogate_pair = String::from_array([
-    (0xD800).unsafe_to_char(), // Leading surrogate
-    (0x0041).unsafe_to_char(), // Invalid trailing surrogate (just a regular 'A')
-  ])
-  let view = invalid_surrogate_pair[:]
-  // This should abort with "invalid surrogate pair"
-  let _ = view.char_length_ge(1)
-
+  ignore(String::from_array([(0xD800).unsafe_to_char(), 'A']))
 }
 
 ///|
